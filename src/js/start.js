@@ -5,6 +5,7 @@ define([
         'fx-c-c/adapters/star_schema_adapter',
         'fx-c-c/adapters/matrix_schema_adapter',
         'fx-c-c/adapters/FENIX_adapter',
+        'fx-c-c/adapters/FAOSTAT_adapter',
         'fx-c-c/templates/base_template',
         'fx-c-c/creators/highcharts_creator'
     ],
@@ -55,9 +56,6 @@ define([
             try {
 
                 // getting chart definition
-
-
-                //console.log(chartObj);
 
                 // render chart
                 creator.render({chartObj: chartObj});
@@ -121,6 +119,8 @@ define([
                         return this.adapterUrl ? this.adapterUrl : 'fx-c-c/adapters/matrix_schema_adapter';
                     case 'wds-objects':
                         return this.adapterUrl ? this.adapterUrl : 'fx-c-c/adapters/star_schema_adapter';
+                    case 'faostat':
+                        return this.adapterUrl ? this.adapterUrl : 'fx-c-c/adapters/FAOSTAT_adapter';
                 }
             }
             else {
