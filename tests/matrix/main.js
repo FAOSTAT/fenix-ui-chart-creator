@@ -3,7 +3,7 @@ requirejs(['../../src/js/paths', '../utils'], function (paths, Utils) {
 
     'use strict';
 
-    var FENIX_CDN = "//fenixapps.fao.org/repository",
+    var FENIX_CDN = "//fenixrepo.fao.org/cdn",
         baseUrl = '../../src/js/';
 
     // replace placeholders and baseUrl
