@@ -38,7 +38,31 @@ define([
             return this.dfd.promise();
         };
 
-        ChartCreator.prototype.render = function (config) {
+
+        ChartCreator.prototype.addTimeserieData = function (config) {
+
+            var prepareChart = (config.prepareChart === undefined)? true: config.prepareChart;
+
+            console.log(prepareChart);
+
+            // TODO: template?
+            this.adapter.prepareData($.extend(true, {model: config.model}, config.adapter));
+
+            if  (prepareChart) {
+                this.prepareChart(config);
+            }
+            return this;
+        };
+
+        ChartCreator.prototype.prepareChart = function (config) {
+
+            this.adapter.prepareChart(config.adapter || {});
+            return this;
+
+        };
+
+        ChartCreator.prototype.createChart = function (config) {
+
 
             var template = new this.templateFactory(
                     $.extend(true, {model: config.model, container: config.container}, config.template)
@@ -47,9 +71,51 @@ define([
                     $.extend(true, {container: config.container, noData: config.noData}, config.creator)
                 );
 
-            // render template
-            template.render();
+            // prepare chart
+            var chartObj = this.adapter.getChartObj();
 
+            console.log(chartObj);
+
+            // TODO: Handle the error
+            try {
+
+                // getting chart definition
+
+                // render chart
+                template.render();
+                creator.render({chartObj: chartObj});
+
+            } catch (e) {
+                creator.noDataAvailable();
+            }
+
+            return {
+                destroy: $.proxy(function () {
+
+                    creator.destroy();
+                    template.destroy();
+
+                }, this)
+            };
+
+        };
+
+        ChartCreator.prototype.render = function (config) {
+
+            var renderChart = (config.renderChart === undefined)? true: config.renderChart;
+
+            var template = new this.templateFactory(
+                    $.extend(true, {model: config.model, container: config.container}, config.template)
+                ),
+                creator = new this.creatorFactory(
+                    $.extend(true, {container: config.container, noData: config.noData}, config.creator)
+                );
+
+            if  (config.model) {
+                this.adapter.prepareData($.extend(true, {model: config.model}, config.adapter));
+            }
+
+            // prepare chart
             var chartObj = this.adapter.prepareChart(config.adapter || {});
 
             // TODO: Handle the error
@@ -58,7 +124,11 @@ define([
                 // getting chart definition
 
                 // render chart
-                creator.render({chartObj: chartObj});
+                if (renderChart) {
+                    // render template
+                    template.render();
+                    creator.render({chartObj: chartObj});
+                }
 
             } catch (e) {
                 creator.noDataAvailable();
@@ -93,6 +163,10 @@ define([
                 // TODO: use one configuration object in this phase
                 self.adapter = new Adapter($.extend(true, {model: config.model}, config.adapter));
                 self.adapter.prepareData($.extend(true, {model: config.model}, config.adapter));
+
+                if (config.prepareChart) {
+                    self.prepareChart(config);
+                }
 
                 if (typeof config.onReady === 'function') {
                     config.onReady(self);

@@ -42,20 +42,29 @@ define([
                     series: []
                 },
 
-                debugging: true
+                debugging: false
             },
             e = {
                 DESTROY: 'fx.component.chart.destroy',
                 READY: 'fx.component.chart.ready'
             };
 
-        function FENIX_Highchart_Adapter() {
+        function FAOSTAT_Highchart_Adapter() {
             return this;
         }
 
-        FENIX_Highchart_Adapter.prototype.prepareData = function (config) {
+        FAOSTAT_Highchart_Adapter.prototype.prepareData = function (config) {
 
-            this.o = $.extend(true, {}, defaultOptions, config);
+            console.log(this.o);
+            if (this.o === undefined) {
+                this.o = $.extend(true, {}, defaultOptions, config);
+            }
+            else {
+                var chartObj = this.o.chartObj;
+                console.log(chartObj);
+                this.o = $.extend(true, {}, defaultOptions, config);
+                this.o.chartObj = chartObj;
+            }
 
             if (this._validateInput() === true) {
                 this._initVariable();
@@ -71,7 +80,7 @@ define([
             }
         };
 
-        FENIX_Highchart_Adapter.prototype._prepareData = function () {
+        FAOSTAT_Highchart_Adapter.prototype._prepareData = function () {
 
             // TODO: change variables names according to the new nomenclature
 
@@ -151,12 +160,12 @@ define([
                 }, this));
             }
 
-            console.log(this.o.aux.series);
+            //console.log(this.o.aux.series);
 
             this._printAuxColumns();
         };
 
-      /*  FENIX_Highchart_Adapter.prototype._addUnitOfMeasure = function() {
+      /*  FAOSTAT_Highchart_Adapter.prototype._addUnitOfMeasure = function() {
 
             var suffix = '',
                 index = -1;
@@ -180,7 +189,7 @@ define([
          * @returns {*}
          * @private
          */
-        FENIX_Highchart_Adapter.prototype._getColumnStructure = function (columns, column) {
+        FAOSTAT_Highchart_Adapter.prototype._getColumnStructure = function (columns, column) {
             if (column.hasOwnProperty('type')) {
                 switch (column.type) {
                     case 'code':
@@ -195,22 +204,22 @@ define([
             }
         };
 
-        FENIX_Highchart_Adapter.prototype.prepareChart = function (config) {
+        FAOSTAT_Highchart_Adapter.prototype.prepareChart = function (config) {
 
             config = $.extend(true, {}, this.o, config);
 
-            console.log(config);
-
             switch (config.type) {
                 case 'pie':
-                    return this._processPieChart(config);
+                    this.o.chartObj = this._processPieChart(config);
                 case 'scatter':
                     break;
                 default :
                     // check wheater the xAxis column is time
                    //    var xSubject = config.aux.x.column;
-                    return this._processStandardChart(config, (config.type.toLowerCase() === 'timeserie'));
+                    this.o.chartObj = this._processStandardChart(config, (config.type.toLowerCase() === 'timeserie'));
             }
+
+            return this.o.chartObj;
         };
 
         /**
@@ -218,9 +227,7 @@ define([
          * @param isTimeserie
          * @private
          */
-        FENIX_Highchart_Adapter.prototype._processStandardChart = function (config, isTimeserie) {
-
-            console.log("here");
+        FAOSTAT_Highchart_Adapter.prototype._processStandardChart = function (config, isTimeserie) {
 
             var chartObj = config.chartObj,
                 x = config.aux.x,
@@ -229,12 +236,14 @@ define([
                 auxSeries = config.aux.series,
                 data = config.$data;
 
+            //console.log(data);
+
             // Sort Data TODO: check if the sort is always applicable
             //this._sortData(data, x.index);
 
             // Process yAxis
             if (y.index) {
-                chartObj.yAxis = this._createYAxis(data, y.index);
+                chartObj.yAxis = this._createYAxis(chartObj.yAxis, data, y.index);
             }
 
             // create Series
@@ -247,12 +256,11 @@ define([
                 chartObj.xAxis.minTickInterval = 12 * 30 * 24 * 3600 * 1000; // An year
                 // TODO: add yearly data
 
-                chartObj.series = this._createSeriesTimeserie(data, x, y, value, chartObj.yAxis, auxSeries);
+                chartObj.series = this._createSeriesTimeserie(chartObj.series, data, x, y, value, chartObj.yAxis, auxSeries);
             }
             else {
                 // create xAxis categories
                 chartObj.xAxis.categories = this._createXAxisCategories(data, x.index);
-                console.log(chartObj.xAxis.categories );
                 chartObj.series = this._createSeriesStandard(data, x, y, value, chartObj.yAxis, chartObj.xAxis, auxSeries);
 
                 /*                // TODO: make it nicer
@@ -268,10 +276,12 @@ define([
             // TODO: this has to be refactoring, doesn't work with multiple yAxis
             //$.extend(true, chartObj,this._addUnitOfMeasure());
 
-            console.log(chartObj);
-
             return chartObj;
         };
+
+        FAOSTAT_Highchart_Adapter.prototype._addData = function (data, columnIndex) {
+
+        },
 
         /**
          * creates the yAxis TODO: probably to check
@@ -279,9 +289,9 @@ define([
          * @param columnIndex
          * @private
          */
-        FENIX_Highchart_Adapter.prototype._createYAxis = function (data, columnIndex) {
+        FAOSTAT_Highchart_Adapter.prototype._createYAxis = function (yAxis, data, columnIndex) {
             var yAxisNames = [],
-                yAxis = [];
+                yAxis = yAxis || [];
 
             // TODO it can be done faster the unique array
             data.forEach(function (value) {
@@ -303,7 +313,7 @@ define([
          * @param data
          * @private
          */
-        FENIX_Highchart_Adapter.prototype._createXAxisCategories = function (data, xIndex) {
+        FAOSTAT_Highchart_Adapter.prototype._createXAxisCategories = function (data, xIndex) {
 
             var xCategories = [];
             data.forEach(function (row) {
@@ -318,17 +328,21 @@ define([
             return _.uniq(xCategories);
         };
 
-        FENIX_Highchart_Adapter.prototype._createSeriesTimeserie = function (data, x, y, value, yAxis, auxSeries) {
+        FAOSTAT_Highchart_Adapter.prototype._createSeriesTimeserie = function (series, data, x, y, value, yAxis, auxSeries) {
             var xIndex = x.index,
                 yIndex = y.index,
                 valueIndex = value.index,
-                series = [];
+                series = series || [];
+
+
+            //console.log(series, xIndex, yIndex);
+            //console.log(data);
 
 
             // Create the series
             data.forEach(_.bind(function (row) {
 
-                console.log(row);
+                //console.log(row);
 
                 // unique key for series
                 var name = this._createSeriesName(row, auxSeries);
@@ -351,10 +365,10 @@ define([
                     if (row[valueIndex] !== null) {
 
 
-                        // TODO: FIX THE VALUE!!!!!!!!!!!!!1
+                        // TODO: FIX THE VALUE!!!!!!!!!!!!!!
                         serie.data.push([
                             this._getDatetimeByDataType('year', row[xIndex]),
-                            parseFloat(row[valueIndex].replace(",", ""))
+                            parseFloat(this.replaceAll(row[valueIndex], ",", ""))
                         ]);
                         //serie.data.push([row[xIndex], 12]);
 
@@ -365,7 +379,7 @@ define([
 
             }, this));
 
-            console.log(series);
+            //console.log(series);
 
             return series;
         };
@@ -379,7 +393,7 @@ define([
          */
             //TODO: clean the code, clone the object to return a new series.
             // TODO: This method can be highly simplified.
-        FENIX_Highchart_Adapter.prototype._addSerie = function (series, serie, valueIndex) {
+        FAOSTAT_Highchart_Adapter.prototype._addSerie = function (series, serie, valueIndex) {
             var seriesAlreadyAdded = false;
             for (var i = 0; i < series.length; i++) {
                 if (serie.name === series[i].name) {
@@ -402,7 +416,7 @@ define([
             return series;
         };
 
-        FENIX_Highchart_Adapter.prototype._createSeriesStandard = function (data, x, y, value, yAxis, xAxis, auxSeries) {
+        FAOSTAT_Highchart_Adapter.prototype._createSeriesStandard = function (data, x, y, value, yAxis, xAxis, auxSeries) {
 
             try {
                 var xIndex = x.index,
@@ -438,8 +452,9 @@ define([
                     if (index !== null) {
 
                         if (row[valueIndex] !== null && index !== -1) {
+
                             //serie.data[index] = isNaN(row[valueIndex]) ? row[valueIndex] : parseFloat(row[valueIndex].replace(",", ""));
-                            serie.data[index] = parseFloat(row[valueIndex].replace(",", ""));
+                            serie.data[index] = parseFloat(this.replaceAll(row[valueIndex], ",", ""));
                             // Add serie to series
                             series = this._addSerie(series, serie, index);
                         }
@@ -447,7 +462,7 @@ define([
 
                 }, this);
 
-                console.log(series);
+                //console.log(series);
 
             }catch (e) {
                 console.error(e);
@@ -462,7 +477,7 @@ define([
          * @param index
          * @private
          */
-        FENIX_Highchart_Adapter.prototype._sortData = function (data, index) {
+        FAOSTAT_Highchart_Adapter.prototype._sortData = function (data, index) {
 
             data.sort(_.bind(function (a, b) {
 
@@ -477,7 +492,7 @@ define([
             }, this));
         };
 
-        FENIX_Highchart_Adapter.prototype._getDatetimeByDataType = function (type, value) {
+        FAOSTAT_Highchart_Adapter.prototype._getDatetimeByDataType = function (type, value) {
 
             // TODO: this is can be simplified and not applied to each row
             switch (type.toLowerCase()) {
@@ -489,7 +504,7 @@ define([
             }
         };
 
-        FENIX_Highchart_Adapter.prototype._getYAxisIndex = function (yAxis, label) {
+        FAOSTAT_Highchart_Adapter.prototype._getYAxisIndex = function (yAxis, label) {
             var index = 0;
 
             if (label !== null) {
@@ -507,7 +522,7 @@ define([
             return index;
         };
 
-        FENIX_Highchart_Adapter.prototype._createSeriesName = function (row, auxSeries) {
+        FAOSTAT_Highchart_Adapter.prototype._createSeriesName = function (row, auxSeries) {
 
             var name = '';
 
@@ -520,7 +535,7 @@ define([
             return name;
         };
 
-        FENIX_Highchart_Adapter.prototype._processPieChart = function (config) {
+        FAOSTAT_Highchart_Adapter.prototype._processPieChart = function (config) {
             var chartObj = config.chartObj,
                 valueIndex = config.aux.value.index,
                 auxSeries = config.aux.series,
@@ -541,37 +556,34 @@ define([
             // create PIE series
             _.each(data, function (row) {
 
-                console.log(row);
+                //console.log(row);
 
                 var name = this._createSeriesName(row, auxSeries);
                 if (row[valueIndex] !== null && name !== null) {
                     //var value = isNaN(row[valueIndex]) ? row[valueIndex] : parseFloat(row[valueIndex].replace(",", ""));
-                    var value = parseFloat(row[valueIndex].replace(",", ""));
+                    var value = parseFloat(this.replaceAll(row[valueIndex], ",", ""));
                     // N.B. values <=0 are not allowed in a pie chart
-                    console.log(value);
+                    //console.log(value);
                     if (value > 0) {
-                        console.log(name, value);
+                        //console.log(name, value);
                         chartObj.series[0].data.push([name, value]);
                     }
 
                 }
 
             }, this);
-
-            console.log(chartObj);
-
             return chartObj;
         };
 
-        FENIX_Highchart_Adapter.prototype._onValidateDataSuccess = function () {
+        FAOSTAT_Highchart_Adapter.prototype._onValidateDataSuccess = function () {
             amplify.publish(e.READY, this);
         };
 
-        FENIX_Highchart_Adapter.prototype._onValidateDataError = function () {
+        FAOSTAT_Highchart_Adapter.prototype._onValidateDataError = function () {
             this._showConfigurationForm();
         };
 
-        FENIX_Highchart_Adapter.prototype._initVariable = function () {
+        FAOSTAT_Highchart_Adapter.prototype._initVariable = function () {
 
             // TODO: this could be simplified (and not store all that information)
             this.o.$metadata = this.o.model.metadata;
@@ -580,7 +592,7 @@ define([
 
         };
 
-        FENIX_Highchart_Adapter.prototype._validateInput = function () {
+        FAOSTAT_Highchart_Adapter.prototype._validateInput = function () {
 
             this.errors = {};
 
@@ -635,14 +647,14 @@ define([
             return (Object.keys(this.errors).length === 0);
         };
 
-        FENIX_Highchart_Adapter.prototype._validateData = function () {
+        FAOSTAT_Highchart_Adapter.prototype._validateData = function () {
 
             this.errors = {};
 
             return (Object.keys(this.errors).length === 0);
         };
 
-        FENIX_Highchart_Adapter.prototype._printAuxColumns = function () {
+        FAOSTAT_Highchart_Adapter.prototype._printAuxColumns = function () {
             if (this.o.debugging) {
                 console.log("----------Aux Columns");
                 console.log(this.o.aux.x);
@@ -653,10 +665,23 @@ define([
             }
         };
 
-        FENIX_Highchart_Adapter.prototype.destroy = function () {
+        FAOSTAT_Highchart_Adapter.prototype.destroy = function () {
             
         };
 
+        FAOSTAT_Highchart_Adapter.prototype.escapeRegExp = function(string) {
+            return string.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+        };
 
-        return FENIX_Highchart_Adapter;
+        FAOSTAT_Highchart_Adapter.prototype.replaceAll = function (string, find, replace) {
+            return string.replace(new RegExp(this.escapeRegExp(find), 'g'), replace);
+        };
+
+        FAOSTAT_Highchart_Adapter.prototype.getChartObj = function () {
+            return this.o.chartObj;
+        }
+
+
+
+        return FAOSTAT_Highchart_Adapter;
     });
