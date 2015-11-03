@@ -55,13 +55,11 @@ define([
 
         FAOSTAT_Highchart_Adapter.prototype.prepareData = function (config) {
 
-            console.log(this.o);
             if (this.o === undefined) {
                 this.o = $.extend(true, {}, defaultOptions, config);
             }
             else {
                 var chartObj = this.o.chartObj;
-                console.log(chartObj);
                 this.o = $.extend(true, {}, defaultOptions, config);
                 this.o.chartObj = chartObj;
             }
@@ -679,9 +677,7 @@ define([
 
         FAOSTAT_Highchart_Adapter.prototype.getChartObj = function () {
             return this.o.chartObj;
-        }
-
-
+        };
 
         return FAOSTAT_Highchart_Adapter;
     });

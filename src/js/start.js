@@ -74,8 +74,6 @@ define([
             // prepare chart
             var chartObj = this.adapter.getChartObj();
 
-            console.log(chartObj);
-
             // TODO: Handle the error
             try {
 
