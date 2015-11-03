@@ -198,7 +198,7 @@ requirejs(['../../src/js/paths', '../utils'], function (paths, Utils) {
         });*/
 
         // COMPARE
-       $.getJSON("data/compare/forestry_production_trade.json", function (model1) {
+/*       $.getJSON("data/compare/forestry_production_trade.json", function (model1) {
 
             $.getJSON("data/compare/production_crops.json", function (model2) {
 
@@ -256,10 +256,39 @@ requirejs(['../../src/js/paths', '../utils'], function (paths, Utils) {
 
 
                         creator.createChart(Utils.lineChartOptions({}));
-                        //creator.render(Utils.lineChartOptions({}));
+
+                    });
+
+                });
+
+            });
+
+        });*/
 
 
-                        /*var o = {
+        $.getJSON("data/compare/investment_machinery_archive.json", function (model1) {
+
+            $.getJSON("data/compare/investment_machinery.json", function (model2) {
+
+                    // Consistant Timeserie Chart
+                    var c = new ChartCreator();
+                    $.when(c.init({
+                        model: model1,
+                        adapter: {
+                            adapterType: 'faostat',
+                            type: "timeserie",
+                            xDimensions: 'yeargroup',
+                            yDimensions: 'unit',
+                            valueDimensions: 'value',
+                            seriesDimensions: ['areagroup', 'elementgroup', 'itemgroup']
+                        },
+                        template: {},
+                        creator: {},
+                        prepareChart: true
+
+                    })).then(function (creator) {
+
+                        var o = {
                             model: model2,
                             adapter: {
                                 adapterType: 'faostat',
@@ -271,32 +300,14 @@ requirejs(['../../src/js/paths', '../utils'], function (paths, Utils) {
                             },
                             template: {},
                             creator: {},
+                            prepareChart: true
                         };
+                        creator.addTimeserieData(o);
 
-                        creator.render(o, false);
 
-                        console.log(model3);
-
-                        o = {
-                            model: model3,
-                            adapter: {
-                                adapterType: 'faostat',
-                                type: "timeserie",
-                                xDimensions: 'yeargroup',
-                                yDimensions: 'unit',
-                                valueDimensions: 'value',
-                                seriesDimensions: ['areagroup', 'elementgroup', 'itemgroup']
-                            },
-                            template: {},
-                            creator: {}
-                        };
-
-                        creator.render(Utils.lineChartOptions(o));*/
-
+                        creator.createChart(Utils.lineChartOptions({}));
 
                     });
-
-                });
 
             });
 

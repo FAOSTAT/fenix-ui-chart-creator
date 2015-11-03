@@ -289,11 +289,19 @@ define([
          */
         FAOSTAT_Highchart_Adapter.prototype._createYAxis = function (yAxis, data, columnIndex) {
             var yAxisNames = [],
-                yAxis = yAxis || [];
+                yAxis = yAxis || [],
+                yAxisCache = [];
+
+            // if original yAxis was not empty
+            yAxis.forEach(function (value) {
+                yAxisCache.push(value.title.text);
+            });
 
             // TODO it can be done faster the unique array
             data.forEach(function (value) {
-                yAxisNames.push(value[columnIndex]);
+                if ($.inArray(value[columnIndex], yAxisCache) === -1) {
+                    yAxisNames.push(value[columnIndex]);
+                }
             });
             yAxisNames = _.uniq(yAxisNames);
 
