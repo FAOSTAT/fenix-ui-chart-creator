@@ -42,6 +42,8 @@ define([
                     series: []
                 },
 
+                seriesLabelBreak: ' <br>',
+
                 debugging: false
             },
             e = {
@@ -534,7 +536,7 @@ define([
 
             _.each(auxSeries, function (serie) {
                 if (row[serie.index] !== undefined && row[serie.index] !== null) {
-                    name = name.concat(row[serie.index] + ' ');
+                    name = name.concat(row[serie.index] + this.o.seriesLabelBreak);
                 }
             }, this);
 
