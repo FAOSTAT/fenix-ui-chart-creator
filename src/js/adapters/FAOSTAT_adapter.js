@@ -193,11 +193,13 @@ define([
             if (column.hasOwnProperty('type')) {
                 switch (column.type) {
                     case 'code':
-                        return null; //TODO: remove it
+                        //TODO: remove it
+                        return null;
                     default :
                         return {
                             column: column,
-                            index: column.index,
+                            //TODO: remove it when API changes
+                            index: (column.key === 'Unit Description')? 'Unit': column.key,
                             id: column.dimension_id
                         };
                 }
@@ -475,7 +477,7 @@ define([
             }catch (e) {
                 console.error(e);
             }
-
+            console.log(series);
             return series;
         };
 
@@ -517,9 +519,11 @@ define([
 
             if (label !== null) {
                 _.each(yAxis, function (y, i) {
+
                     if (y.title.text === label) {
                         index = i;
                     }
+                    //console.log(y.title.text, label, index);
                 }, this);
 
                 if (index < 0) {
@@ -682,7 +686,8 @@ define([
         };
 
         FAOSTAT_Highchart_Adapter.prototype.replaceAll = function (string, find, replace) {
-            return string.replace(new RegExp(this.escapeRegExp(find), 'g'), replace);
+            //return string.replace(new RegExp(this.escapeRegExp(find), 'g'), replace);
+            return string;
         };
 
         FAOSTAT_Highchart_Adapter.prototype.getChartObj = function () {
