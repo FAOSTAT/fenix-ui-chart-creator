@@ -14,6 +14,36 @@ requirejs(['../../src/js/paths', '../utils'], function (paths, Utils) {
 
     requirejs(['fx-c-c/start', 'jquery', 'amplify'], function (ChartCreator, $) {
 
+        $.getJSON("data/pie2.json", function (model) {
+
+            console.log(model);
+            // Consistant Timeseri/e Chart
+            var c = new ChartCreator();
+            $.when(c.init({
+                model: model,
+                adapter: {
+                    adapterType: 'faostat',
+                    type: "pie",
+                    xDimensions: null,
+                    yDimensions: null,
+                    valueDimensions: 'value',
+                    seriesDimensions: ['area']
+                    //seriesDimensions: []
+                },
+                template: {},
+                creator: {}
+            })).then(function(creator) {
+                var o = {
+                    template: {
+                        title: "Pie",
+                        subtitle: "Emissions by continent (GHG-GE)"
+                    }
+                };
+                creator.render(Utils.pieChartOptions(o));
+            });
+
+        });
+
         // Chart with timeseries
       /*  $.getJSON("data/data.json", function (model) {
 
@@ -45,7 +75,7 @@ requirejs(['../../src/js/paths', '../utils'], function (paths, Utils) {
         });*/
 
 
-        $.getJSON("data/double_axes.json", function (model) {
+       /* $.getJSON("data/double_axes.json", function (model) {
 
             // Consistant Timeseri/e Chart
             var c = new ChartCreator();
@@ -72,10 +102,10 @@ requirejs(['../../src/js/paths', '../utils'], function (paths, Utils) {
                 //creator.render(Utils.barChartOptions(o));
             });
 
-        });
+        });*/
 
 
-        $.getJSON("data/scattered_data.json", function (model) {
+        /*$.getJSON("data/scattered_data.json", function (model) {
 
             // Consistant Timeseri/e Chart
             var c = new ChartCreator();
@@ -102,9 +132,9 @@ requirejs(['../../src/js/paths', '../utils'], function (paths, Utils) {
                 //creator.render(Utils.barChartOptions(o));
             });
 
-        });
+        });*/
 
-        // Chart with timeseries
+       /* // Chart with timeseries
         $.getJSON("data/compare/forestry_production_trade_object.json", function (model) {
 
             // Consistant Timeseri/e Chart
@@ -132,7 +162,7 @@ requirejs(['../../src/js/paths', '../utils'], function (paths, Utils) {
                 //creator.render(Utils.barChartOptions(o));
             });
 
-        });
+        });*/
 
 
         /*        $.getJSON("data/no_yearly_data.json", function (model) {
@@ -225,35 +255,7 @@ requirejs(['../../src/js/paths', '../utils'], function (paths, Utils) {
          });
 
          });
-
-         $.getJSON("data/pie.json", function (model) {
-
-         // Consistant Timeseri/e Chart
-         var c = new ChartCreator();
-         $.when(c.init({
-         model: model,
-         adapter: {
-         adapterType: 'faostat',
-         type: "pie",
-         xDimensions: null,
-         yDimensions: null,
-         valueDimensions: 'value',
-         seriesDimensions: ['areagroup']
-         //seriesDimensions: []
-         },
-         template: {},
-         creator: {}
-         })).then(function(creator) {
-         var o = {
-         template: {
-         title: "Pie",
-         subtitle: "Emissions by continent (GHG-GE)"
-         }
-         };
-         creator.render(Utils.pieChartOptions(o));
-         });
-
-         });*/
+*/
 
         /*        $.getJSON("data/compare/producer_prices_annual.json", function (model) {
 
