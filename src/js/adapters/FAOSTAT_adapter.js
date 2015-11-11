@@ -42,7 +42,7 @@ define([
                     series: []
                 },
 
-                seriesLabelBreak: ' <br>',
+                seriesLabelBreak: '<br>',
 
                 debugging: false
             },
@@ -90,8 +90,6 @@ define([
                 series = this.o.seriesDimensions,
                 columns = this.o.$columns,
                 addYAxisToSeriesName = this.o.addYAxisToSeriesName;
-
-            //console.log(xAxis, yAxis, value);
 
             // TODO: workaround on arrays used to standardize all charts.
             // TODO: Add check on multiple columns (like for series)
@@ -159,8 +157,6 @@ define([
 
                 }, this));
             }
-
-            //console.log(this.o.aux.series);
 
             this._printAuxColumns();
         };
@@ -238,8 +234,6 @@ define([
                 auxSeries = config.aux.series,
                 data = config.$data;
 
-            //console.log(data);
-
             // Sort Data TODO: check if the sort is always applicable
             //this._sortData(data, x.index);
 
@@ -264,13 +258,6 @@ define([
                 // create xAxis categories
                 chartObj.xAxis.categories = this._createXAxisCategories(data, x.index);
                 chartObj.series = this._createSeriesStandard(data, x, y, value, chartObj.yAxis, chartObj.xAxis, auxSeries);
-
-                /*                // TODO: make it nicer
-                 // check if the xAxis series is just one value, force to column chart
-                 console.log( chartObj.xAxis.categories)
-                 if (chartObj.xAxis.categories.length <= 1 ) {
-                 chartObj.chart.type = 'column';
-                 }*/
             }
 
             // TODO: add tooltip on series?
@@ -345,14 +332,8 @@ define([
                 series = series || [];
 
 
-            //console.log(series, xIndex, yIndex);
-            //console.log(data);
-
-
             // Create the series
             data.forEach(_.bind(function (row) {
-
-                //console.log(row);
 
                 // unique key for series
                 var name = this._createSeriesName(row, auxSeries);
@@ -388,8 +369,6 @@ define([
                 }
 
             }, this));
-
-            //console.log(series);
 
             return series;
         };
@@ -472,12 +451,10 @@ define([
 
                 }, this);
 
-                //console.log(series);
-
             }catch (e) {
                 console.error(e);
             }
-            console.log(series);
+
             return series;
         };
 
@@ -523,7 +500,7 @@ define([
                     if (y.title.text === label) {
                         index = i;
                     }
-                    //console.log(y.title.text, label, index);
+
                 }, this);
 
                 if (index < 0) {
@@ -536,15 +513,17 @@ define([
 
         FAOSTAT_Highchart_Adapter.prototype._createSeriesName = function (row, auxSeries) {
 
-            var name = '';
+            var name = [];
+
+            // TODO Add a tooltip name? (based on the array)
 
             _.each(auxSeries, function (serie) {
                 if (row[serie.index] !== undefined && row[serie.index] !== null) {
-                    name = name.concat(row[serie.index] + this.o.seriesLabelBreak);
+                   name.push(row[serie.index]);
                 }
             }, this);
 
-            return name;
+            return name.join(this.o.seriesLabelBreak);
         };
 
         FAOSTAT_Highchart_Adapter.prototype._processPieChart = function (config) {
@@ -568,22 +547,19 @@ define([
             // create PIE series
             _.each(data, function (row) {
 
-                //console.log(row);
-
                 var name = this._createSeriesName(row, auxSeries);
                 if (row[valueIndex] !== null && name !== null) {
                     //var value = isNaN(row[valueIndex]) ? row[valueIndex] : parseFloat(row[valueIndex].replace(",", ""));
                     var value = parseFloat(this.replaceAll(row[valueIndex], ",", ""));
                     // N.B. values <=0 are not allowed in a pie chart
-                    //console.log(value);
                     if (value > 0) {
-                        //console.log(name, value);
                         chartObj.series[0].data.push([name, value]);
                     }
 
                 }
 
             }, this);
+
             return chartObj;
         };
 
