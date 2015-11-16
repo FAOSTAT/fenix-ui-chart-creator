@@ -2,7 +2,8 @@
 define([
         'jquery',
         'handlebars',
-        'text!fx-c-c/html/templates/base_template.hbs'
+        //'text!fx-c-c/html/templates/base_template.hbs'
+        'text!fx-c-c/html/templates/custom_template.hbs'
     ],
     function ($, Handlebars, template) {
 
@@ -13,8 +14,7 @@ define([
 
         function Base_template(config) {
             // this should be always reinitialized
-            this.o = {};
-            $.extend(true, this.o, defaultOptions, config);
+            this.o = $.extend(true, {}, defaultOptions, config);
             return this;
         }
 
@@ -32,11 +32,11 @@ define([
         };
 
         Base_template.prototype._injectTemplate = function () {
-            var source = $(template).html();
-            var t = Handlebars.compile(source);
+            var t = Handlebars.compile(template);
             var dynamic_data = this.o;
-            var html = t(dynamic_data);
-            this.o.$container.html(html);
+            console.log(dynamic_data);
+            var html = t(this.o);
+            this.o.$container.html(t(this.o));
         };
 
         Base_template.prototype._initVariable = function () {
