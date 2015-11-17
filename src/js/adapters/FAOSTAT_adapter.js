@@ -539,7 +539,7 @@ define([
             chartObj.series = [
                 {
                     // TODO: name?
-                    name: '',
+                    name: ' ',
                     data: []
                 }
             ];
