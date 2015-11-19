@@ -2,6 +2,7 @@
 define([
         'require',
         'jquery',
+        'loglevel',
         'fx-c-c/adapters/star_schema_adapter',
         'fx-c-c/adapters/matrix_schema_adapter',
         'fx-c-c/adapters/FENIX_adapter',
@@ -9,7 +10,7 @@ define([
         'fx-c-c/templates/base_template',
         'fx-c-c/creators/highcharts_creator'
     ],
-    function (RequireJS, $) {
+    function (RequireJS, $, log) {
 
         'use strict';
 
@@ -42,8 +43,6 @@ define([
         ChartCreator.prototype.addTimeserieData = function (config) {
 
             var prepareChart = (config.prepareChart === undefined)? true: config.prepareChart;
-
-            console.log(prepareChart);
 
             // TODO: template?
             this.adapter.prepareData($.extend(true, {model: config.model}, config.adapter));
@@ -174,7 +173,7 @@ define([
         };
 
         ChartCreator.prototype.onError = function (e) {
-            console.error("ChartCreator Error: ", e);
+            log.error("ChartCreator Error: ", e);
             // TODO: Add an Error message
             this.dfd.reject("ChartCreator Error: ", e);
         };

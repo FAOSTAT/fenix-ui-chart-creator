@@ -2,10 +2,11 @@
 define([
         'jquery',
         'underscore',
+        'loglevel',
         'highcharts',
         'amplify'
     ],
-    function ($, _) {
+    function ($, _, log) {
 
         'use strict';
 
@@ -75,7 +76,7 @@ define([
                     this._onValidateDataError();
                 }
             } else {
-                console.error(this.errors);
+                log.error(this.errors);
                 throw new Error("FENIX Chart creator has not a valid configuration");
             }
         };
@@ -246,7 +247,7 @@ define([
             if (isTimeserie === true) {
 
                 // TODO: move it to the template!!
-                console.warn('TODO: xAxis Categories: for timeserie directly datatime??');
+                log.warn('TODO: xAxis Categories: for timeserie directly datatime??');
                 chartObj.xAxis.type = 'datetime';
                 chartObj.xAxis.minRange = 30 * 24 * 3600 * 1000; //
                 chartObj.xAxis.minTickInterval = 12 * 30 * 24 * 3600 * 1000; // An year
@@ -315,7 +316,7 @@ define([
             var xCategories = [];
             data.forEach(function (row) {
                 if (row[xIndex] === null) {
-                    console.warn("Error on the xAxis data (is null)", row[xIndex], row, xIndex);
+                    log.warn("Error on the xAxis data (is null)", row[xIndex], row, xIndex);
                 }
                 else {
                     xCategories.push(row[xIndex]);
@@ -452,7 +453,7 @@ define([
                 }, this);
 
             }catch (e) {
-                console.error(e);
+                log.error(e);
             }
 
             return series;
@@ -486,7 +487,7 @@ define([
                 case 'year':
                     return Date.UTC(value, 0, 1);
                 default :
-                    console.warn("Date type date format not yet supported: " + type);
+                    log.warn("Date type date format not yet supported: " + type);
                     break;
             }
         };
@@ -504,7 +505,7 @@ define([
                 }, this);
 
                 if (index < 0) {
-                    console.error("Data contains an unknown yAxis value: " + label);
+                    log.error("Data contains an unknown yAxis value: " + label);
                 }
             }
 
@@ -644,12 +645,12 @@ define([
 
         FAOSTAT_Highchart_Adapter.prototype._printAuxColumns = function () {
             if (this.o.debugging) {
-                console.log("----------Aux Columns");
-                console.log(this.o.aux.x);
-                console.log(this.o.aux.y); // yAxis can be undefined (launch a warning)
-                console.log(this.o.aux.value);
-                console.log(this.o.aux.series);
-                console.log("~~~~~~~");
+                log.info("----------Aux Columns");
+                log.info(this.o.aux.x);
+                log.info(this.o.aux.y); // yAxis can be undefined (launch a warning)
+                log.info(this.o.aux.value);
+                log.info(this.o.aux.series);
+                log.info("~~~~~~~");
             }
         };
 

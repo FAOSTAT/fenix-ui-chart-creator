@@ -1,13 +1,14 @@
-/*global define, amplify, console*/
+/*global define, amplify */
 define([
         'jquery',
         'underscore',
+        'loglevel',
         'fx-c-c/config/creators/highcharts_template',
         //'highcharts-export',
         //'highcharts-export-csv',
         'amplify'
     ],
-    function ($, _, baseConfig) {
+    function ($, _, log, baseConfig) {
 
         'use strict';
 
@@ -69,7 +70,7 @@ define([
                     this.noDataAvailable();
                 }
             } else {
-                console.error(this.o.errors);
+                log.error(this.o.errors);
                 throw new Error("FENIX hightchart_creator has not a valid configuration");
             }
         };
