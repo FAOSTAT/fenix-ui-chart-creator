@@ -5,13 +5,13 @@
                 <a class="btn btn-primary" data-role="export">{{export}}</a>
             </div>
         {{/if}}
-        <h5>{{title}}</h5>
-        <h4>{{subtitle}}</h4>
+        <h5>{{i18n title}}</h5>
+        <h4>{{i18n subtitle}}</h4>
     </div>
     <div class="panel-body">
         <div data-role="content" {{#if height}}style="height:{{height}}"{{/if}}></div>
     </div>
     {{#if footer}}
-        <div class="panel-footer clearfix">{{{footer}}}</div>
+        <div class="panel-footer clearfix">{{{i18n footer}}}</div>
     {{/if}}
 </div>
