@@ -387,6 +387,7 @@ define([
             var seriesAlreadyAdded = false;
             for (var i = 0; i < series.length; i++) {
                 if (serie.name === series[i].name) {
+
                     // this a "switch" between the timeserie and a standard chart
                     // TODO: make it nicer, or separate the two _addSerie function
                     // TODO: between _addSerie and _addSerieTimeseries
@@ -400,9 +401,11 @@ define([
                     break;
                 }
             }
+
             if (!seriesAlreadyAdded) {
                 series.push(serie);
             }
+
             return series;
         };
 

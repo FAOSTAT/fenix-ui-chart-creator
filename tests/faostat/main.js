@@ -14,38 +14,9 @@ requirejs(['../../src/js/paths', '../utils'], function (paths, Utils) {
 
     requirejs(['fx-c-c/start', 'jquery', 'amplify'], function (ChartCreator, $) {
 
-        $.getJSON("data/pie2.json", function (model) {
-
-            console.log(model);
-            // Consistant Timeseri/e Chart
-            var c = new ChartCreator();
-            $.when(c.init({
-                model: model,
-                adapter: {
-                    adapterType: 'faostat',
-                    type: "pie",
-                    xDimensions: null,
-                    yDimensions: null,
-                    valueDimensions: 'value',
-                    seriesDimensions: ['area']
-                    //seriesDimensions: []
-                },
-                template: {},
-                creator: {}
-            })).then(function(creator) {
-                var o = {
-                    template: {
-                        title: "Pie",
-                        subtitle: "Emissions by continent (GHG-GE)"
-                    }
-                };
-                creator.render(Utils.pieChartOptions(o));
-            });
-
-        });
 
         // Chart with timeseries
-      /*  $.getJSON("data/data.json", function (model) {
+      $.getJSON("data/compare/test.json", function (model) {
 
             // Consistant Timeseri/e Chart
             var c = new ChartCreator();
@@ -53,11 +24,11 @@ requirejs(['../../src/js/paths', '../utils'], function (paths, Utils) {
                 model: model,
                 adapter: {
                     adapterType: 'faostat',
-                    type: "timeserie",
-                    xDimensions: 'year',
+                    type: "standard",
+                    xDimensions: 'item',
                     yDimensions: 'unit',
                     valueDimensions: 'value',
-                    seriesDimensions: ['area', 'element']
+                    seriesDimensions: ['partnerarea', 'reporterarea', 'element']
                 },
                 template: {},
                 creator: {}
@@ -72,7 +43,7 @@ requirejs(['../../src/js/paths', '../utils'], function (paths, Utils) {
                 //creator.render(Utils.barChartOptions(o));
             });
 
-        });*/
+        });
 
 
        /* $.getJSON("data/double_axes.json", function (model) {
