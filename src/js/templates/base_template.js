@@ -34,7 +34,9 @@ define([
 
         Base_template.prototype._injectTemplate = function () {
 
-            var t = Handlebars.compile(template);
+            log.info(this.o)
+
+            var t = Handlebars.compile((this.o.hasOwnProperty('html'))? this.o.html || template: template);
             this.o.$container.html(t(this.o));
 
         };
