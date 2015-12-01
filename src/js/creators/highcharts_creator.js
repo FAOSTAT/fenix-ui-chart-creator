@@ -82,8 +82,6 @@ define([
 
         HightchartCreator.prototype._createChart = function () {
             this.o.config = $.extend(true, {}, baseConfig, this.o.chartObj);
-            log.info(this.o.chartObj)
-
             this.$container.highcharts(this.o.config);
             //this.$container.highcharts('StockChart', this.o.config);
         };
@@ -97,6 +95,26 @@ define([
         };
 
         HightchartCreator.prototype._validateSeries = function() {
+
+            var switchToColumn = true;
+
+            // check that at least one serie is > 1
+            if (this.o.chartObj.chart.type === 'line') {
+                for(var i=0; i < this.o.chartObj.series.length; i++) {
+                    for(var j=0; j < this.o.chartObj.series[i].data.length; j++) {
+                        if (this.o.chartObj.series[i].data[j] !== null) {
+                            if (this.o.chartObj.series[i].data.length > 1) {
+                                switchToColumn = false;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (switchToColumn) {
+                    this.o.chartObj.chart.type = 'column';
+                }
+            }
 
             for(var i=0; i < this.o.chartObj.series.length; i++) {
                 for(var j=0; j < this.o.chartObj.series[i].data.length; j++) {
