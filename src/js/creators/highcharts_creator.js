@@ -4,22 +4,29 @@ define([
         'underscore',
         'loglevel',
         'fx-c-c/config/creators/highcharts_template',
+        //'i18n!fx-c-c/i18n/translate',
+        // TODO: switch to module language
+        'i18n!nls/common',
+        'highcharts',
+       // 'highstock',
+
         //'highcharts-export',
         //'highcharts-export-csv',
         'amplify'
     ],
-    function ($, _, log, baseConfig) {
+    function ($, _, log, baseConfig, i18n) {
 
         'use strict';
 
         var defaultOptions = {
 
                 s: {
-                    CONTENT: '[data-role="content"]'
+                    CONTENT: '[data-role="content"]',
+                    NO_DATA: '[data-role="no_data_available"]'
                 },
 
                 // TODO: handle multilanguage?
-                noData: "<div>No Data Available</div>"
+                noData: "<div>" + i18n.no_data_available +"</div>"
 
             },
             e = {
@@ -29,9 +36,7 @@ define([
 
         function HightchartCreator(config) {
 
-            this.o = {};
-            $.extend(true, this.o, defaultOptions, config);
-            this.o.hightchart_template = baseConfig;
+            this.o = $.extend(true, {}, defaultOptions, config);
 
             return this;
         }
@@ -77,7 +82,10 @@ define([
 
         HightchartCreator.prototype._createChart = function () {
             this.o.config = $.extend(true, {}, baseConfig, this.o.chartObj);
+            log.info(this.o.chartObj)
+
             this.$container.highcharts(this.o.config);
+            //this.$container.highcharts('StockChart', this.o.config);
         };
 
         HightchartCreator.prototype._onValidateDataError = function () {
@@ -110,6 +118,7 @@ define([
         };
 
         HightchartCreator.prototype.noDataAvailable = function () {
+            this.$container.height('auto');
             this.$container.html(this.o.noData);
         };
 

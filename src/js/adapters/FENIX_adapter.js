@@ -2,7 +2,7 @@
 define([
         'jquery',
         'underscore',
-        'highcharts',
+        //'highcharts',
         'amplify'
     ],
     function ($, _) {

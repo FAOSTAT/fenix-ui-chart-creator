@@ -3,7 +3,7 @@ define([
         'jquery',
         'underscore',
         'loglevel',
-        'highcharts',
+        //'highcharts',
         'amplify'
     ],
     function ($, _, log) {
@@ -215,8 +215,10 @@ define([
                 default :
                     // check wheater the xAxis column is time
                    //    var xSubject = config.aux.x.column;
-                    this.o.chartObj = this._processStandardChart(config, (config.type.toLowerCase() === 'timeserie'));
+                    this.o.chartObj = this._processStandardChart(config, config.type.toLowerCase());
             }
+
+            log.info(this.o.chartObj);
 
             return this.o.chartObj;
         };
@@ -226,7 +228,7 @@ define([
          * @param isTimeserie
          * @private
          */
-        FAOSTAT_Highchart_Adapter.prototype._processStandardChart = function (config, isTimeserie) {
+        FAOSTAT_Highchart_Adapter.prototype._processStandardChart = function (config, type) {
 
             var chartObj = config.chartObj,
                 x = config.aux.x,
@@ -243,16 +245,33 @@ define([
                 chartObj.yAxis = this._createYAxis(chartObj.yAxis, data, y.index);
             }
 
+            //log.info(type)
             // create Series
-            if (isTimeserie === true) {
+            // TODO: used switch
+            if (type === 'timeserie') {
 
                 // TODO: move it to the template!!
-                log.warn('TODO: xAxis Categories: for timeserie directly datatime??');
+                //log.warn('TODO: xAxis Categories: for timeserie directly datatime??');
+                //chartObj.xAxis.type = 'datetime';
+                //chartObj.xAxis.minRange = 30 * 24 * 3600 * 1000; //
+                //chartObj.xAxis.minTickInterval = 12 * 30 * 24 * 3600 * 1000; // An year
+                // TODO: add yearly data
+
+                chartObj.xAxis.categories = this._createXAxisCategoriesTimeseries(data, x.index);
+                //chartObj.series = this._createSeriesTimeserie(chartObj.series, data, x, y, value, chartObj.yAxis, auxSeries);
+                //chartObj.series = this._createSeriesTimeserie(chartObj.series, data, x, y, value, chartObj.yAxis, auxSeries);
+                chartObj.series = this._createSeriesStandard(data, x, y, value, chartObj.yAxis, chartObj.xAxis, auxSeries);
+
+            }
+            else if (type === 'timeserie_compare') {
+
+                // TODO: move it to the template!!
+                //log.warn('TODO: xAxis Categories: for timeserie directly datatime??');
                 chartObj.xAxis.type = 'datetime';
                 chartObj.xAxis.minRange = 30 * 24 * 3600 * 1000; //
                 chartObj.xAxis.minTickInterval = 12 * 30 * 24 * 3600 * 1000; // An year
-                // TODO: add yearly data
 
+                // TODO: add yearly data
                 chartObj.series = this._createSeriesTimeserie(chartObj.series, data, x, y, value, chartObj.yAxis, auxSeries);
             }
             else {
@@ -306,6 +325,33 @@ define([
             return yAxis;
         };
 
+
+        FAOSTAT_Highchart_Adapter.prototype._createXAxisCategoriesTimeseries = function (data, xIndex) {
+
+            var xCategories = [];
+            data.forEach(function (row) {
+                if (row[xIndex] === null) {
+                    log.warn("Error on the xAxis data (is null)", row[xIndex], row, xIndex);
+                }
+                else {
+                    xCategories.push(row[xIndex]);
+                }
+            });
+
+            log.info();
+
+            var max = Math.max.apply(null, xCategories);
+            var min = Math.min.apply(null, xCategories);
+
+            xCategories = [];
+            for(var i = min; i <= max; i++) {
+                xCategories.push(i.toString());
+            }
+
+            return xCategories;
+            //return _.uniq(xCategories);
+        };
+
         /**
          * Create unique xAxis categories
          * @param data
@@ -333,6 +379,9 @@ define([
                 series = series || [];
 
 
+            log.info(x)
+
+
             // Create the series
             data.forEach(_.bind(function (row) {
 
@@ -356,13 +405,14 @@ define([
 
                     if (row[valueIndex] !== null) {
 
-
                         // TODO: FIX THE VALUE!!!!!!!!!!!!!!
                         serie.data.push([
                             this._getDatetimeByDataType('year', row[xIndex]),
                             parseFloat(this.replaceAll(row[valueIndex], ",", ""))
                         ]);
                         //serie.data.push([row[xIndex], 12]);
+                        // fill gaps
+                        //log.info(serie.xAxis);
 
                         // Add serie to series
                         series = this._addSerie(series, serie);
