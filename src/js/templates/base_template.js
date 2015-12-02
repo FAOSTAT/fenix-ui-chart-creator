@@ -4,7 +4,8 @@ define([
         'handlebars',
         //'text!fx-c-c/html/templates/base_template.hbs'
         'text!fx-c-c/html/templates/custom_template.hbs',
-        'loglevel'
+        'loglevel',
+        'highcharts-export'
     ],
     function ($, Handlebars, template, log) {
 
