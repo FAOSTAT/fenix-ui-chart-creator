@@ -45,7 +45,7 @@ define([
 
                 seriesLabelBreak: '<br>',
 
-                debugging: false
+                debugging: true
             },
             e = {
                 DESTROY: 'fx.component.chart.destroy',
@@ -101,10 +101,14 @@ define([
             // TODO: if type is 'pie' force the adapted to avoid xDimensions and yDimensions
             if (this.o.type === 'pie') {
                 this.o.xDimensions = null;
-                this.o.yDimensions = null;
+                //this.o.yDimensions = null;
                 xAxis = this.o.xDimensions;
                 yAxis = this.o.yDimensions;
+                yAxis = _.isArray(yAxis) ? yAxis[0] : yAxis;
+
+                log.info(yAxis)
             }
+
 
             // parsing columns to get
             columns.forEach(_.bind(function (column) {
@@ -584,10 +588,13 @@ define([
             var chartObj = config.chartObj,
                 valueIndex = config.aux.value.index,
                 auxSeries = config.aux.series,
+                yAxisIndex = (config.aux.y)? config.aux.y.index: null,
                 data = config.$data;
 
             // force type "pie" to chart
             chartObj.chart.type = "pie";
+
+
 
             // initialize the series
             chartObj.series = [
@@ -598,7 +605,9 @@ define([
                 }
             ];
 
+
             // create PIE series
+            var measurementUnit = null;
             _.each(data, function (row) {
 
                 var name = this._createSeriesName(row, auxSeries);
@@ -609,10 +618,22 @@ define([
                     if (value > 0) {
                         chartObj.series[0].data.push([name, value]);
                     }
-
+                }
+                if (yAxisIndex && row[yAxisIndex] !== null) {
+                    measurementUnit = row[yAxisIndex];
                 }
 
             }, this);
+
+
+            // add measurement unit
+            chartObj.plotOptions = {
+                pie: {
+                    tooltip: {
+                        valueSuffix: (measurementUnit)? ' (' + measurementUnit + ')': ''
+                    }
+                }
+            };
 
             return chartObj;
         };
