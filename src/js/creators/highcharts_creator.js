@@ -57,7 +57,27 @@ define([
             return (Object.keys(this.o.errors).length === 0);
         };
 
+
+        HightchartCreator.prototype._mergeConfiguration= function(config) {
+
+            if (this.o.chartObj && this.o.chartObj.yAxis && config.chartObj && config.chartObj.yAxis && Array.isArray( config.chartObj.yAxis)) {
+
+                var yAxis = $.extend(true, {}, this.o.chartObj.yAxis);
+
+                for (var i = 0; i < config.chartObj.yAxis.length; i++) {
+                    config.chartObj.yAxis[i] = $.extend(true, config.chartObj.yAxis[i], yAxis);
+                }
+
+            }
+
+            $.extend(true, this.o, config);
+
+        };
+
+
         HightchartCreator.prototype.render = function (config) {
+
+            this._mergeConfiguration(config);
 
             $.extend(true, this.o, config);
 
