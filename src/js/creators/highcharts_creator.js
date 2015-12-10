@@ -65,7 +65,8 @@ define([
                 var yAxis = $.extend(true, {}, this.o.chartObj.yAxis);
 
                 for (var i = 0; i < config.chartObj.yAxis.length; i++) {
-                    config.chartObj.yAxis[i] = $.extend(true, config.chartObj.yAxis[i], yAxis);
+                    config.chartObj.yAxis[i] = $.extend(true, {}, config.chartObj.yAxis[i], yAxis);
+                    console.log( config.chartObj.yAxis[i])
                 }
 
             }
@@ -77,7 +78,7 @@ define([
 
         HightchartCreator.prototype.render = function (config) {
 
-            this._mergeConfiguration(config);
+            //this._mergeConfiguration(config);
 
             $.extend(true, this.o, config);
 
