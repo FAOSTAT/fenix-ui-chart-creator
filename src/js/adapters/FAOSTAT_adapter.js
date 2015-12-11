@@ -45,7 +45,7 @@ define([
 
                 seriesLabelBreak: '<br>',
 
-                debugging: true
+                debugging: false
             },
             e = {
                 DESTROY: 'fx.component.chart.destroy',
@@ -106,7 +106,7 @@ define([
                 yAxis = this.o.yDimensions;
                 yAxis = _.isArray(yAxis) ? yAxis[0] : yAxis;
 
-                log.info(yAxis)
+                //log.info(yAxis)
             }
 
 
@@ -222,7 +222,7 @@ define([
                     this.o.chartObj = this._processStandardChart(config, config.type.toLowerCase());
             }
 
-            log.info(this.o.chartObj);
+            //log.info(this.o.chartObj);
 
             return this.o.chartObj;
         };
@@ -342,8 +342,6 @@ define([
                 }
             });
 
-            log.info();
-
             var max = Math.max.apply(null, xCategories);
             var min = Math.min.apply(null, xCategories);
 
@@ -383,7 +381,7 @@ define([
                 series = series || [];
 
 
-            log.info(x)
+            //log.info(x)
 
 
             // Create the series

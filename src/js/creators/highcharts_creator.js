@@ -7,6 +7,7 @@ define([
         //'i18n!fx-c-c/i18n/translate',
         // TODO: switch to module language
         'i18n!nls/common',
+        'fx-c-c/config/events',
         'highcharts',
        // 'highstock',
 
@@ -14,7 +15,7 @@ define([
         //'highcharts-export-csv',
         'amplify'
     ],
-    function ($, _, log, baseConfig, i18n) {
+    function ($, _, log, baseConfig, i18n, E) {
 
         'use strict';
 
@@ -37,6 +38,8 @@ define([
         function HightchartCreator(config) {
 
             this.o = $.extend(true, {}, defaultOptions, config);
+
+            this.bindEventListeners();
 
             return this;
         }
@@ -137,8 +140,8 @@ define([
                 }
             }
 
-            for(var i=0; i < this.o.chartObj.series.length; i++) {
-                for(var j=0; j < this.o.chartObj.series[i].data.length; j++) {
+            for(var i = 0; i < this.o.chartObj.series.length; i++) {
+                for(var j = 0; j < this.o.chartObj.series[i].data.length; j++) {
                     if (this.o.chartObj.series[i].data[j] !== null) {
                         return true;
                     }
@@ -148,12 +151,18 @@ define([
             return false;
         };
 
-        HightchartCreator.prototype.reflow = function () {
+        HightchartCreator.prototype.reflow = function (e) {
 
-            if (typeof this.$container !== 'undefined' && this.$chartRendered) {
-                this.$container.highcharts().reflow();
+            log.info("Chart reflow: ", this.$container.selector)
+
+            if (typeof this.$container !== 'undefined') {
+                var c = this.$container.highcharts();
+                if (c && c.reflow) {
+                    c.reflow();
+                }
                 return true;
             }
+
         };
 
         HightchartCreator.prototype.noDataAvailable = function () {
@@ -161,9 +170,35 @@ define([
             this.$container.html(this.o.noData);
         };
 
-        HightchartCreator.prototype.destroy = function () {
-            this.o.$container.highcharts().destroy();
+
+        HightchartCreator.prototype.bindEventListeners = function () {
+
+            amplify.subscribe(E.WINDOW_RESIZE, this, this.reflow);
+
         };
+
+        HightchartCreator.prototype.unbindEventListeners = function () {
+
+           log.info("unbind: ", this.o.container);
+           amplify.unsubscribe(E.WINDOW_RESIZE, this, this.reflow);
+
+        };
+
+        HightchartCreator.prototype.destroy = function () {
+
+
+
+            this.unbindEventListeners();
+
+            if ( this.$container ) {
+                var c = this.$container.highcharts();
+                if (c && c.destroy) {
+                   // log.info('destroy chart', this);
+                    c.destroy();
+                }
+            }
+        };
+
 
         return HightchartCreator;
     });

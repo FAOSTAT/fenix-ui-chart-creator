@@ -24,6 +24,7 @@ define([
         }
 
         ChartCreator.prototype.init = function (config) {
+
             this.dfd = $.Deferred();
 
             var self = this;
@@ -37,6 +38,7 @@ define([
 
             // Return the Promise so caller can't change the Deferred
             return this.dfd.promise();
+
         };
 
 
@@ -62,13 +64,8 @@ define([
 
         ChartCreator.prototype.createChart = function (config) {
 
-
-            var template = new this.templateFactory(
-                    $.extend(true, {model: config.model, container: config.container}, config.template)
-                ),
-                creator = new this.creatorFactory(
-                    $.extend(true, {container: config.container, noData: config.noData}, config.creator)
-                );
+            this.template = new this.templateFactory($.extend(true, {model: config.model, container: config.container}, config.template));
+            this.creator = new this.creatorFactory($.extend(true, {container: config.container, noData: config.noData}, config.creator));
 
             // prepare chart
             var chartObj = this.adapter.getChartObj();
@@ -79,21 +76,14 @@ define([
                 // getting chart definition
 
                 // render chart
-                template.render();
-                creator.render({chartObj: chartObj});
+                this.template.render();
+                this.creator.render({chartObj: chartObj});
 
             } catch (e) {
-                creator.noDataAvailable();
+                this.creator.noDataAvailable();
             }
 
-            return {
-                destroy: $.proxy(function () {
-
-                    creator.destroy();
-                    template.destroy();
-
-                }, this)
-            };
+            return this;
 
         };
 
@@ -101,12 +91,8 @@ define([
 
             var renderChart = (config.renderChart === undefined)? true: config.renderChart;
 
-            var template = new this.templateFactory(
-                    $.extend(true, {model: config.model, container: config.container}, config.template)
-                ),
-                creator = new this.creatorFactory(
-                    $.extend(true, {container: config.container, noData: config.noData}, config.creator)
-                );
+            this.template = new this.templateFactory($.extend(true, {model: config.model, container: config.container}, config.template));
+            this.creator  = new this.creatorFactory($.extend(true, {container: config.container, noData: config.noData}, config.creator));
 
             if  (config.model) {
                 this.adapter.prepareData($.extend(true, {model: config.model}, config.adapter));
@@ -123,22 +109,15 @@ define([
                 // render chart
                 if (renderChart) {
                     // render template
-                    template.render();
-                    creator.render({chartObj: chartObj});
+                    this.template.render();
+                    this.creator.render({chartObj: chartObj});
                 }
 
             } catch (e) {
-                creator.noDataAvailable();
+                this.creator.noDataAvailable();
             }
 
-            return {
-                destroy: $.proxy(function () {
-
-                    creator.destroy();
-                    template.destroy();
-
-                }, this)
-            };
+            return this;
         };
 
         ChartCreator.prototype.preloadResources = function (config) {
@@ -168,6 +147,7 @@ define([
                 if (typeof config.onReady === 'function') {
                     config.onReady(self);
                 }
+
                 self.dfd.resolve(self);
             });
         };
@@ -230,6 +210,19 @@ define([
 
         ChartCreator.prototype._validateInput = function () {
             return true;
+        };
+
+        ChartCreator.prototype.destroy = function () {
+
+            if ( this.template ) {
+                log.info('Chart creator destroy ', this.template.o.title);
+                this.template.destroy();
+            }
+            if( this.creator) {
+                // TODO: handle destroy
+                this.creator.destroy();
+            }
+
         };
 
         return ChartCreator;

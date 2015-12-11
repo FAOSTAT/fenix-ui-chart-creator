@@ -35,10 +35,11 @@ define([
 
         Base_template.prototype._injectTemplate = function () {
 
-            log.info(this.o)
-
             var t = Handlebars.compile((this.o.hasOwnProperty('html'))? this.o.html || template: template);
-            this.o.$container.html(t(this.o));
+
+            if ( this.o.$container) {
+                this.o.$container.html(t(this.o));
+            }
 
         };
 
