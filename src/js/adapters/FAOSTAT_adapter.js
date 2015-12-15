@@ -14,6 +14,8 @@ define([
 
                 lang: 'EN',
 
+                decimalPlaces: 0,
+
                 //type: 'timeserie',  //[custom, scatter, pie] TODO: probably not needed and not used yet
 
                 // Chart (Based on Highchart Definition)
@@ -23,6 +25,7 @@ define([
                     //yAxis: [],
                     series: []
                 },
+
 
                 // filtering parameters
                 //xDimensions: ['yeargroup'],
@@ -239,6 +242,7 @@ define([
                 y = config.aux.y,
                 value = config.aux.value,
                 auxSeries = config.aux.series,
+                decimalPlaces = config.decimalPlaces,
                 data = config.$data;
 
             // Sort Data TODO: check if the sort is always applicable
@@ -264,7 +268,7 @@ define([
                 chartObj.xAxis.categories = this._createXAxisCategoriesTimeseries(data, x.index);
                 //chartObj.series = this._createSeriesTimeserie(chartObj.series, data, x, y, value, chartObj.yAxis, auxSeries);
                 //chartObj.series = this._createSeriesTimeserie(chartObj.series, data, x, y, value, chartObj.yAxis, auxSeries);
-                chartObj.series = this._createSeriesStandard(data, x, y, value, chartObj.yAxis, chartObj.xAxis, auxSeries);
+                chartObj.series = this._createSeriesStandard(data, x, y, value, chartObj.yAxis, chartObj.xAxis, auxSeries, decimalPlaces);
 
             }
             else if (type === 'timeserie_compare') {
@@ -281,7 +285,7 @@ define([
             else {
                 // create xAxis categories
                 chartObj.xAxis.categories = this._createXAxisCategories(data, x.index);
-                chartObj.series = this._createSeriesStandard(data, x, y, value, chartObj.yAxis, chartObj.xAxis, auxSeries);
+                chartObj.series = this._createSeriesStandard(data, x, y, value, chartObj.yAxis, chartObj.xAxis, auxSeries, decimalPlaces);
             }
 
             // TODO: add tooltip on series?
@@ -410,7 +414,7 @@ define([
                         // TODO: FIX THE VALUE!!!!!!!!!!!!!!
                         serie.data.push([
                             this._getDatetimeByDataType('year', row[xIndex]),
-                            parseFloat(this.replaceAll(row[valueIndex], ",", ""))
+                            //parseFloat(this.replaceAll(row[valueIndex], ",", ""))
                         ]);
                         //serie.data.push([row[xIndex], 12]);
                         // fill gaps
@@ -461,13 +465,14 @@ define([
             return series;
         };
 
-        FAOSTAT_Highchart_Adapter.prototype._createSeriesStandard = function (data, x, y, value, yAxis, xAxis, auxSeries) {
+        FAOSTAT_Highchart_Adapter.prototype._createSeriesStandard = function (data, x, y, value, yAxis, xAxis, auxSeries, decimalPlaces) {
 
             try {
                 var xIndex = x.index,
                     yIndex = y.index,
                     valueIndex = value.index,
                     xCategories = xAxis.categories,
+                    decimalPlaces = decimalPlaces,
                     series = [];
 
                 // Create the series
@@ -499,7 +504,7 @@ define([
                         if (row[valueIndex] !== undefined && row[valueIndex] !== null && index !== -1) {
 
                             //serie.data[index] = isNaN(row[valueIndex]) ? row[valueIndex] : parseFloat(row[valueIndex].replace(",", ""));
-                            serie.data[index] = parseFloat(this.replaceAll(row[valueIndex], ",", ""));
+                            serie.data[index] = parseFloat(row[valueIndex].toFixed(decimalPlaces));
                             // Add serie to series
                             series = this._addSerie(series, serie, index);
 
@@ -588,6 +593,7 @@ define([
                 valueIndex = config.aux.value.index,
                 auxSeries = config.aux.series,
                 yAxisIndex = (config.aux.y)? config.aux.y.index: null,
+                decimalPlaces = config.decimalPlaces,
                 data = config.$data;
 
             // force type "pie" to chart
@@ -612,7 +618,7 @@ define([
                 var name = this._createSeriesName(row, auxSeries);
                 if (row[valueIndex] !== null && name !== null) {
                     //var value = isNaN(row[valueIndex]) ? row[valueIndex] : parseFloat(row[valueIndex].replace(",", ""));
-                    var value = parseFloat(this.replaceAll(row[valueIndex], ",", ""));
+                    var value = parseFloat(row[valueIndex].toFixed(decimalPlaces));
                     // N.B. values <=0 are not allowed in a pie chart
                     if (value > 0) {
                         chartObj.series[0].data.push([name, value]);

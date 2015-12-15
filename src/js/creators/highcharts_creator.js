@@ -107,6 +107,15 @@ define([
         };
 
         HightchartCreator.prototype._createChart = function () {
+
+            // TODO: use configuration
+            Highcharts.setOptions({
+                lang: {
+                    decimalPoint: '.',
+                    thousandsSep: ','
+                }
+            });
+
             this.o.config = $.extend(true, {}, baseConfig, this.o.chartObj);
             this.$container.highcharts(this.o.config);
             //this.$container.highcharts('StockChart', this.o.config);
