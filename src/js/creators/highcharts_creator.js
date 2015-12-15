@@ -87,7 +87,7 @@ define([
 
             if (this._validateInput() === true) {
 
-                console.log(config)
+                //log.info(config)
 
                 //Init chart container
                 this.$container = $(this.o.container).find(this.o.s.CONTENT);

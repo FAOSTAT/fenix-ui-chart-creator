@@ -502,7 +502,7 @@ define([
                             serie.data[index] = parseFloat(this.replaceAll(row[valueIndex], ",", ""));
                             // Add serie to series
                             series = this._addSerie(series, serie, index);
-                            
+
                         }
                     }
 
