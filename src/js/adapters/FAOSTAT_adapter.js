@@ -498,12 +498,11 @@ define([
 
                         if (row[valueIndex] !== undefined && row[valueIndex] !== null && index !== -1) {
 
-                            log.info(row[valueIndex])
-
                             //serie.data[index] = isNaN(row[valueIndex]) ? row[valueIndex] : parseFloat(row[valueIndex].replace(",", ""));
                             serie.data[index] = parseFloat(this.replaceAll(row[valueIndex], ",", ""));
                             // Add serie to series
                             series = this._addSerie(series, serie, index);
+                            
                         }
                     }
 
