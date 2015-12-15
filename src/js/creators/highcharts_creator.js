@@ -4,9 +4,9 @@ define([
         'underscore',
         'loglevel',
         'fx-c-c/config/creators/highcharts_template',
-        //'i18n!fx-c-c/i18n/translate',
+        'i18n!fx-c-c/nls/translate',
         // TODO: switch to module language
-        'i18n!nls/common',
+        //'i18n!nls/common',
         'fx-c-c/config/events',
         'highcharts',
        // 'highstock',
@@ -86,6 +86,8 @@ define([
             $.extend(true, this.o, config);
 
             if (this._validateInput() === true) {
+
+                console.log(config)
 
                 //Init chart container
                 this.$container = $(this.o.container).find(this.o.s.CONTENT);

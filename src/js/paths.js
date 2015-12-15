@@ -13,6 +13,7 @@ define(function () {
             'fx-c-c/adapters':  './adapters',
             'fx-c-c/templates': './templates',
             'fx-c-c/creators': './creators',
+            'fx-c-c/nls': '../../nls',
 
             // third party libs
             text: '{FENIX_CDN}/js/requirejs/plugins/text/2.0.12/text',
@@ -28,7 +29,10 @@ define(function () {
             // highcharts plugins TODO: switch to CDN if they are going to be used
             'highcharts-export': '{FENIX_CDN}/js/highcharts/4.1.9/js/modules/exporting',
             //'highcharts-export': '{FENIX_CDN}/js/highcharts/4.0.4/js/modules/exporting',
-            'highcharts-export-csv': 'http://highslide-software.github.io/export-csv/export-csv'
+            'highcharts-export-csv': 'http://highslide-software.github.io/export-csv/export-csv',
+
+            i18n: "{FENIX_CDN}/js/requirejs/plugins/i18n/2.0.4/i18n"
+
         },
 
         shim: {

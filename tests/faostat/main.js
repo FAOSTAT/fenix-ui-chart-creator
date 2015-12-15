@@ -16,7 +16,7 @@ requirejs(['../../src/js/paths', '../utils'], function (paths, Utils) {
 
 
         // Chart with timeseries
-      $.getJSON("data/compare/test.json", function (model) {
+      $.getJSON("data/food_security_indicators.json", function (model) {
 
             // Consistant Timeseri/e Chart
             var c = new ChartCreator();
@@ -25,10 +25,10 @@ requirejs(['../../src/js/paths', '../utils'], function (paths, Utils) {
                 adapter: {
                     adapterType: 'faostat',
                     type: "standard",
-                    xDimensions: 'item',
+                    xDimensions: 'year',
                     yDimensions: 'unit',
                     valueDimensions: 'value',
-                    seriesDimensions: ['partnerarea', 'reporterarea', 'element']
+                    seriesDimensions: ['area', 'item', 'element']
                 },
                 template: {},
                 creator: {}

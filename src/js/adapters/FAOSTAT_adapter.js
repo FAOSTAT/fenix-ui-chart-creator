@@ -405,7 +405,7 @@ define([
                 // push the value of the serie
                 if (row[xIndex] !== null && row[xIndex] !== undefined && row[valueIndex] !== undefined && row[valueIndex] !== null) {
 
-                    if (row[valueIndex] !== null) {
+                    if (row[valueIndex] !== undefined && row[valueIndex] !== null) {
 
                         // TODO: FIX THE VALUE!!!!!!!!!!!!!!
                         serie.data.push([
@@ -496,7 +496,9 @@ define([
 
                     if (index !== null) {
 
-                        if (row[valueIndex] !== null && index !== -1) {
+                        if (row[valueIndex] !== undefined && row[valueIndex] !== null && index !== -1) {
+
+                            log.info(row[valueIndex])
 
                             //serie.data[index] = isNaN(row[valueIndex]) ? row[valueIndex] : parseFloat(row[valueIndex].replace(",", ""));
                             serie.data[index] = parseFloat(this.replaceAll(row[valueIndex], ",", ""));
