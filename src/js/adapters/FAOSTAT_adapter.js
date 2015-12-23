@@ -217,6 +217,7 @@ define([
             switch (config.type) {
                 case 'pie':
                     this.o.chartObj = this._processPieChart(config);
+                    break;
                 case 'scatter':
                     break;
                 default :
