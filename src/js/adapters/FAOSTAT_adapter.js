@@ -294,6 +294,8 @@ define([
             // TODO: this has to be refactoring, doesn't work with multiple yAxis
             //$.extend(true, chartObj,this._addUnitOfMeasure());
 
+            //log.info(chartObj)
+
             return chartObj;
         };
 
@@ -414,7 +416,7 @@ define([
 
                         // TODO: FIX THE VALUE!!!!!!!!!!!!!!
                         serie.data.push([
-                            this._getDatetimeByDataType('year', row[xIndex]),
+                            this._getDatetimeByDataType('year', row[xIndex]), row[valueIndex],
                             //parseFloat(this.replaceAll(row[valueIndex], ",", ""))
                         ]);
                         //serie.data.push([row[xIndex], 12]);
