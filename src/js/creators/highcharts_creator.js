@@ -164,9 +164,8 @@ define([
 
         HightchartCreator.prototype.reflow = function (e) {
 
-            log.info("Chart reflow: ", this.$container.selector)
-
             if (typeof this.$container !== 'undefined') {
+                log.info("HightchartCreator.reflow;", this.$container.selector);
                 var c = this.$container.highcharts();
                 if (c && c.reflow) {
                     c.reflow();
