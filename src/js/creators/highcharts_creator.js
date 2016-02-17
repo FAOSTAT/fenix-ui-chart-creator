@@ -189,7 +189,6 @@ define([
 
         HightchartCreator.prototype.unbindEventListeners = function () {
 
-           log.info("unbind: ", this.o.container);
            amplify.unsubscribe(E.WINDOW_RESIZE, this, this.reflow);
 
         };
