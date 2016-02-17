@@ -22,12 +22,12 @@ define(function () {
             amplify: '{FENIX_CDN}/js/amplify/1.1.2/amplify.min',
             'handlebars': '{FENIX_CDN}/js/handlebars/2.0.0/handlebars',
             //'highcharts': '{FENIX_CDN}/js/highcharts/4.0.4/js/highcharts',
-            'highcharts': '{FENIX_CDN}/js/highcharts/4.1.9/js/highcharts',
+            'highcharts': '{FENIX_CDN}/js/highcharts/4.2.3/js/highcharts',
             'highstock': '{FENIX_CDN}/js/highstock/2.1.9/js/highstock',
             loglevel: '{FENIX_CDN}/js/loglevel/1.4.0/loglevel',
 
             // highcharts plugins TODO: switch to CDN if they are going to be used
-            'highcharts-export': '{FENIX_CDN}/js/highcharts/4.1.9/js/modules/exporting',
+            'highcharts-export': '{FENIX_CDN}/js/highcharts/4.2.3/js/modules/exporting',
             //'highcharts-export': '{FENIX_CDN}/js/highcharts/4.0.4/js/modules/exporting',
             'highcharts-export-csv': 'http://highslide-software.github.io/export-csv/export-csv',
 
