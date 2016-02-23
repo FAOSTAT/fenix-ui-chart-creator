@@ -180,7 +180,6 @@ define([
             this.$container.html(this.o.noData);
         };
 
-
         HightchartCreator.prototype.bindEventListeners = function () {
 
             amplify.subscribe(E.WINDOW_RESIZE, this, this.reflow);
