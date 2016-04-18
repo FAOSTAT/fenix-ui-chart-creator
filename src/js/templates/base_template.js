@@ -4,10 +4,11 @@ define([
         'handlebars',
         //'text!fx-c-c/html/templates/base_template.hbs'
         'text!fx-c-c/html/templates/custom_template.hbs',
+        'i18n!fx-c-c/nls/translate',
         'loglevel',
         'highcharts-export'
     ],
-    function ($, Handlebars, template, log) {
+    function ($, Handlebars, template, i18n, log) {
 
         'use strict';
 
@@ -38,7 +39,7 @@ define([
             var t = Handlebars.compile((this.o.hasOwnProperty('html'))? this.o.html || template: template);
 
             if ( this.o.$container) {
-                this.o.$container.html(t(this.o));
+                this.o.$container.html(t($.extend({}, true, i18n, this.o)));
             }
 
         };

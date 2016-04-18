@@ -69,7 +69,6 @@ define([
 
                 for (var i = 0; i < config.chartObj.yAxis.length; i++) {
                     config.chartObj.yAxis[i] = $.extend(true, {}, config.chartObj.yAxis[i], yAxis);
-                    console.log( config.chartObj.yAxis[i])
                 }
 
             }
