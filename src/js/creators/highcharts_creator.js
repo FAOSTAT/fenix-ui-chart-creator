@@ -181,7 +181,7 @@ define([
 
         HightchartCreator.prototype.bindEventListeners = function () {
 
-            amplify.subscribe(E.WINDOW_RESIZE, this, this.reflow);
+            //amplify.subscribe(E.WINDOW_RESIZE, this, this.reflow);
 
         };
 
