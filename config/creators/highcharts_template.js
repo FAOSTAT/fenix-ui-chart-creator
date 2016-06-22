@@ -5,6 +5,14 @@ define(function () {
 
     return {
 
+       title: {
+           enabled: false,
+           text: null
+       },
+       subtitle: {
+           enabled: false
+       }
+
         //Line chart
 //        chart: {
 //            events: {},
