@@ -127,4 +127,5 @@ define([
         };
 
         return ChartCreator;
+        
     });
