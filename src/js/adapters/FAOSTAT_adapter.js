@@ -760,7 +760,7 @@ define([
         };
 
         FAOSTAT_Highchart_Adapter.prototype.getChartObj = function () {
-            return this.o.chartObj;
+            return (this.o)? this.o.chartObj : undefined;
         };
 
         return FAOSTAT_Highchart_Adapter;

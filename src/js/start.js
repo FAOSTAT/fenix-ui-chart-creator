@@ -1,6 +1,5 @@
 /*global define, console*/
 define([
-        'require',
         'jquery',
         'loglevel',
         // 'fx-c-c/adapters/star_schema_adapter',
@@ -10,13 +9,11 @@ define([
         'fx-c-c/templates/base_template',
         'fx-c-c/creators/highcharts_creator'
     ],
-    function (RequireJS, $, log) {
+    function ($, log, Adapter, Template, Creator) {
 
         'use strict';
 
-        var defaultOptions = {
-            default: ''
-        };
+        var defaultOptions = {};
 
         function ChartCreator() {
             $.extend(true, this, defaultOptions);
@@ -28,6 +25,8 @@ define([
             this.dfd = $.Deferred();
 
             var self = this;
+            this.config = config;
+
             try {
                 if (this._validateInput(config)) {
                     this.preloadResources(config);
@@ -44,76 +43,50 @@ define([
 
         ChartCreator.prototype.addTimeserieData = function (config) {
 
-            var prepareChart = (config.prepareChart === undefined)? true: config.prepareChart;
-
-            // TODO: template?
             this.adapter.prepareData($.extend(true, {model: config.model}, config.adapter));
+            this.adapter.prepareChart(config || {});
 
-            if  (prepareChart) {
-                this.prepareChart(config);
+            return this;
+
+        };
+
+        ChartCreator.prototype.render = function (c) {
+
+            var config = this.config,
+                c = c || {},
+                chartObj = {};
+
+
+            this.template = new Template($.extend(true,
+                {model: config.model, container: config.container},
+                config.template,
+                c.template
+            ));
+
+            this.creator  = new Creator($.extend(true,
+                {container: config.container, noData: config.noData},
+                config.creator,
+                c.creator
+            ));
+
+            // this is done for the timeseries that doesn't require to prepare and process the chart data because
+            // they are processed each time there are new data available
+            if (c.hasOwnProperty('useAdapterChartObj') && c.useAdapterChartObj === true) {
+                chartObj = this.adapter.getChartObj();
+            }else {
+                this.adapter.prepareData($.extend(true, {model: config.model}, config.adapter, c.adapter));
+                chartObj = this.adapter.prepareChart(config.adapter || {});
             }
-            return this;
-        };
 
-        ChartCreator.prototype.prepareChart = function (config) {
-
-            this.adapter.prepareChart(config.adapter || {});
-            return this;
-
-        };
-
-        ChartCreator.prototype.createChart = function (config) {
-
-            this.template = new this.templateFactory($.extend(true, {model: config.model, container: config.container}, config.template));
-            this.creator = new this.creatorFactory($.extend(true, {container: config.container, noData: config.noData}, config.creator));
-
-            // prepare chart
-            var chartObj = this.adapter.getChartObj();
-
-            // TODO: Handle the error
             try {
-
-                // getting chart definition
 
                 // render chart
                 this.template.render();
                 this.creator.render({chartObj: chartObj});
 
-            } catch (e) {
-                this.creator.noDataAvailable();
-            }
-
-            return this;
-
-        };
-
-        ChartCreator.prototype.render = function (config) {
-
-            var renderChart = (config.renderChart === undefined)? true: config.renderChart;
-
-            this.template = new this.templateFactory($.extend(true, {model: config.model, container: config.container}, config.template));
-            this.creator  = new this.creatorFactory($.extend(true, {container: config.container, noData: config.noData}, config.creator));
-
-            if  (config.model) {
-                this.adapter.prepareData($.extend(true, {model: config.model}, config.adapter));
-            }
-
-            // prepare chart
-            var chartObj = this.adapter.prepareChart(config.adapter || {});
-
-            // TODO: Handle the error
-            try {
-
-                // getting chart definition
-
-                // render chart
-                if (renderChart) {
-                    // render template
-                    this.template.render();
-                    this.creator.render({chartObj: chartObj});
-                }
 
             } catch (e) {
+                // TODO: Handle the error
                 this.creator.noDataAvailable();
             }
 
@@ -122,90 +95,16 @@ define([
 
         ChartCreator.prototype.preloadResources = function (config) {
 
-            var baseTemplate = this.getTemplateUrl(),
-                adapter = this.getAdapterUrl(config.model, (config.adapter) ? config.adapter.adapterType : null),
-                creator = this.getCreatorUrl(),
-                self = this;
+            this.adapter = new Adapter($.extend(true, {model: config.model}, config.adapter));
 
-            RequireJS([
-                baseTemplate,
-                adapter,
-                creator
-            ], function (Template, Adapter, Creator) {
+            this.dfd.resolve(this);
 
-                self.templateFactory = Template;
-                self.creatorFactory = Creator;
-
-                // TODO: use one configuration object in this phase
-                self.adapter = new Adapter($.extend(true, {model: config.model}, config.adapter));
-                self.adapter.prepareData($.extend(true, {model: config.model}, config.adapter));
-
-                if (config.prepareChart) {
-                    self.prepareChart(config);
-                }
-
-                if (typeof config.onReady === 'function') {
-                    config.onReady(self);
-                }
-
-                self.dfd.resolve(self);
-            });
         };
 
         ChartCreator.prototype.onError = function (e) {
             log.error("ChartCreator Error: ", e);
             // TODO: Add an Error message
             this.dfd.reject("ChartCreator Error: ", e);
-        };
-
-        ChartCreator.prototype.getAdapterUrl = function (model, adapterType) {
-
-            // TODO add here adapter discovery logic
-            // TODO: Dirty switch to check wheater there is an adapterType specified
-            if (adapterType !== null && adapterType !== undefined) {
-                switch (adapterType.toLocaleLowerCase()) {
-                    case 'fenix':
-                        return this.adapterUrl ? this.adapterUrl : 'fx-c-c/adapters/FENIX_adapter';
-                    case 'wds-array':
-                        return this.adapterUrl ? this.adapterUrl : 'fx-c-c/adapters/matrix_schema_adapter';
-                    case 'wds-objects':
-                        return this.adapterUrl ? this.adapterUrl : 'fx-c-c/adapters/star_schema_adapter';
-                    case 'faostat':
-                        return this.adapterUrl ? this.adapterUrl : 'fx-c-c/adapters/FAOSTAT_adapter';
-                }
-            }
-            else {
-
-                // TODO: Dirty check to be modified
-                // TODO: Validate the model (What to do in case or errors?)
-                if (model.data && model.metadata) {
-                    return this.adapterUrl ? this.adapterUrl : 'fx-c-c/adapters/FENIX_adapter';
-                }
-                else if (model.length > 0 && Array.isArray(model[0])) {
-                    return this.adapterUrl ? this.adapterUrl : 'fx-c-c/adapters/matrix_schema_adapter';
-                }
-                else if (model.length > 0 && typeof model[0] === 'object') {
-                    return this.adapterUrl ? this.adapterUrl : 'fx-c-c/adapters/star_schema_adapter';
-                }
-                else {
-                    if (!model.data) {
-                        model.data = [];
-                        return this.adapterUrl ? this.adapterUrl : 'fx-c-c/adapters/FENIX_adapter';
-
-                    }
-                    throw new Error("The are not available adapter for the current model:", model);
-                }
-            }
-        };
-
-        ChartCreator.prototype.getTemplateUrl = function () {
-            //TODO add here template discovery logic
-            return this.templateUrl ? this.templateUrl : 'fx-c-c/templates/base_template';
-        };
-
-        ChartCreator.prototype.getCreatorUrl = function () {
-            //TODO add here template discovery logic
-            return this.creatorUrl ? this.creatorUrl : 'fx-c-c/creators/highcharts_creator';
         };
 
         ChartCreator.prototype._validateInput = function () {

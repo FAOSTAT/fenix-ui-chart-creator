@@ -31,7 +31,9 @@ define(function () {
             //'highcharts-export': '{FENIX_CDN}/js/highcharts/4.0.4/js/modules/exporting',
             'highcharts-export-csv': 'http://highslide-software.github.io/export-csv/export-csv',
 
-            i18n: "{FENIX_CDN}/js/requirejs/plugins/i18n/2.0.4/i18n"
+            i18n: "{FENIX_CDN}/js/requirejs/plugins/i18n/2.0.4/i18n",
+
+            q: '{FENIX_CDN}/js/q/1.1.2/q',
 
         },
 
