@@ -52,29 +52,31 @@ define([
 
         ChartCreator.prototype.render = function (c) {
 
-            var config = this.config,
-                c = c || {},
-                chartObj = {};
+            this.config = $.extend(true, {}, this.config, c);
+            // TODO: should saved in this.config?
+            var  chartObj = {},
+                config = this.config;
 
-
-            this.template = new Template($.extend(true,
-                {model: config.model, container: config.container},
-                config.template,
-                c.template
+            this.template = new Template($.extend(
+                true,
+                {},
+                {container: config.container},
+                config.template
             ));
 
-            this.creator  = new Creator($.extend(true,
+            this.creator = new Creator($.extend(
+                true,
+                {},
                 {container: config.container, noData: config.noData},
-                config.creator,
-                c.creator
+                config.creator
             ));
 
             // this is done for the timeseries that doesn't require to prepare and process the chart data because
             // they are processed each time there are new data available
-            if (c.hasOwnProperty('useAdapterChartObj') && c.useAdapterChartObj === true) {
+            if (config.hasOwnProperty('useAdapterChartObj') && config.useAdapterChartObj === true) {
                 chartObj = this.adapter.getChartObj();
             }else {
-                this.adapter.prepareData($.extend(true, {model: config.model}, config.adapter, c.adapter));
+                this.adapter.prepareData($.extend(true, {model: config.model}, config.adapter));
                 chartObj = this.adapter.prepareChart(config.adapter || {});
             }
 
