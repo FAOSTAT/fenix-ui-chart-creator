@@ -1,4 +1,4 @@
-/*global define */
+/*global define, Highcharts */
 define([
         'jquery',
         'handlebars',
@@ -6,6 +6,8 @@ define([
         'text!fx-c-c/html/templates/custom_template.hbs',
         'i18n!fx-c-c/nls/translate',
         'loglevel',
+        // avoid to import here Highcharts?
+        'highcharts',
         'highcharts-export'
     ],
     function ($, Handlebars, template, i18n, log) {
@@ -35,6 +37,7 @@ define([
             return this;
         };
 
+        // TODO: should be set at each chart creation?
         Base_template.prototype._initHighchartsConfig =function(){
 
             Highcharts.setOptions({
