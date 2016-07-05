@@ -24,6 +24,7 @@ define([
         Base_template.prototype.render = function () {
 
             if (this._validateInput() === true) {
+                this._initHighchartsConfig();
                 this._initVariable();
                 this._injectTemplate(template);
             } else {
@@ -33,6 +34,23 @@ define([
 
             return this;
         };
+
+        Base_template.prototype._initHighchartsConfig =function(){
+
+            Highcharts.setOptions({
+                lang: {
+                    contextButtonTitle: i18n.contextButtonTitle,
+                    downloadJPEG: i18n.downloadJPEG,
+                    downloadPDF: i18n.downloadPDF,
+                    downloadPNG: i18n.downloadPNG,
+                    downloadSVG: i18n.downloadSVG,
+                    printChart: i18n.printChart,
+                    resetZoom: i18n.resetZoom,
+                    resetZoomTitle: i18n.resetZoomTitle
+                }
+            });
+
+        }
 
         Base_template.prototype._injectTemplate = function () {
 

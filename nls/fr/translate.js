@@ -2,6 +2,15 @@
 define({
 
     no_data_available: 'No data available.',
-    download_data: 'Télécharger Données'
+    download_data: 'Télécharger Données',
+
+    contextButtonTitle: "Imprimez/Exportez graphique",
+    downloadJPEG: "Imprimez graphique, Téléchargez image PNG/JPEG",
+    downloadPDF: "Téléchargez document PDF",
+    downloadPNG: "Téléchargez PNG",
+    downloadSVG: "Téléchargez image vectorielle SVG",
+    printChart: "Imprimez/Exportez graphique",
+    resetZoom: "Réinit. zoom",
+    resetZoomTitle: "Réinitialiser zoom 1:1"
 
 });
