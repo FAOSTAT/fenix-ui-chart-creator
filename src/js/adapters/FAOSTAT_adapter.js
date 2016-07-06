@@ -675,8 +675,7 @@ define([
             if (!this.o.model.metadata.hasOwnProperty("dsd")) {
                 this.errors.dsd = "Metadata does not container 'dsd' attribute.";
             }
-
-
+            
             //Container
             /* if (!this.hasOwnProperty("container")) {
              this.errors.container = "'container' attribute not present.";

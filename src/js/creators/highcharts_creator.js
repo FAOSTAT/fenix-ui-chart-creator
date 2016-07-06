@@ -193,8 +193,6 @@ define([
 
         HightchartCreator.prototype.destroy = function () {
 
-
-
             this.unbindEventListeners();
 
             if ( this.$container ) {
