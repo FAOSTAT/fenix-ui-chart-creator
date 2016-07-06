@@ -218,6 +218,9 @@ define([
                 case 'pie':
                     this.o.chartObj = this._processPieChart(config);
                     break;
+                case 'treemap':
+                    this.o.chartObj = this._processTreeMapChart(config);
+                    break;
                 case 'scatter':
                     break;
                 default :
@@ -646,6 +649,75 @@ define([
             return chartObj;
         };
 
+        FAOSTAT_Highchart_Adapter.prototype._processTreeMapChart = function (config) {
+
+            var chartObj = config.chartObj,
+                valueIndex = config.aux.value.index,
+                auxSeries = config.aux.series,
+                yAxisIndex = (config.aux.y)? config.aux.y.index: null,
+                decimalPlaces = config.decimalPlaces,
+                data = config.$data;
+
+            // force type "pie" to chart
+            chartObj.chart.type = "treemap";
+
+            // TODO: remove hardcoded here
+            // N.B. this goes in conflict with other options in the standard charts
+            chartObj.colorAxis = {
+                minColor: '#ffeda0',
+                maxColor: '#e31a1c'
+            };
+            // initialize the series
+            chartObj.series = [
+                {
+                    type: 'treemap',
+                    layoutAlgorithm: 'squarified',
+                    data: []
+                }
+            ];
+
+
+            // create TreeMap series
+            var measurementUnit = null;
+            _.each(data, function (row) {
+
+                var name = this._createSeriesName(row, auxSeries);
+                if (row[valueIndex] !== null && name !== null) {
+                    //var value = isNaN(row[valueIndex]) ? row[valueIndex] : parseFloat(row[valueIndex].replace(",", ""));
+                    var value = parseFloat(row[valueIndex].toFixed(decimalPlaces));
+                    // N.B. values <=0 are not allowed in a pie chart
+                    if (value > 0) {
+                        chartObj.series[0].data.push({
+                            name: name,
+                            value: value,
+                            colorValue: value
+                        });
+                    }
+                }
+                if (yAxisIndex && row[yAxisIndex] !== null) {
+                    measurementUnit = row[yAxisIndex];
+                }
+
+            }, this);
+
+
+            // add measurement unit
+            chartObj.plotOptions = {
+                treemap: {
+                    tooltip: {
+                        valueSuffix: (measurementUnit)? ' (' + measurementUnit + ')': ''
+                    }
+                }
+            };
+
+            // fix highcharts bug (with the shared it doesn't work the hover)
+            chartObj.tooltip = {
+                "shared": false
+            };
+
+            return chartObj;
+        };
+
         FAOSTAT_Highchart_Adapter.prototype._onValidateDataSuccess = function () {
             amplify.publish(e.READY, this);
         };
@@ -675,7 +747,8 @@ define([
             if (!this.o.model.metadata.hasOwnProperty("dsd")) {
                 this.errors.dsd = "Metadata does not container 'dsd' attribute.";
             }
-            
+
+
             //Container
             /* if (!this.hasOwnProperty("container")) {
              this.errors.container = "'container' attribute not present.";

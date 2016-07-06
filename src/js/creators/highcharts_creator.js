@@ -1,4 +1,4 @@
-/*global define, amplify */
+/*global define, amplify, Highcharts*/
 define([
         'jquery',
         'underscore',
@@ -8,7 +8,10 @@ define([
         // TODO: switch to module language
         //'i18n!nls/common',
         'fx-c-c/config/events',
-        'highcharts',
+        //'highcharts',
+        //'highcharts-more',
+        'highcharts-heatmap',
+        'highcharts-treemap',
        // 'highstock',
 
         //'highcharts-export',
@@ -116,8 +119,10 @@ define([
             });
 
             this.o.config = $.extend(true, {}, baseConfig, this.o.chartObj);
+
             this.$container.highcharts(this.o.config);
             //this.$container.highcharts('StockChart', this.o.config);
+
         };
 
         HightchartCreator.prototype._onValidateDataError = function () {
@@ -157,6 +162,7 @@ define([
                     }
                 }
             }
+
 
             return false;
         };

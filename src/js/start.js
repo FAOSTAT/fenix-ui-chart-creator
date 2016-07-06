@@ -39,8 +39,7 @@ define([
             return this.dfd.promise();
 
         };
-
-
+        
         ChartCreator.prototype.addTimeserieData = function (config) {
 
             this.adapter.prepareData($.extend(true, {model: config.model}, config.adapter));
@@ -89,6 +88,7 @@ define([
 
             } catch (e) {
                 // TODO: Handle the error
+                log.error("ChartCreator.render", e);
                 this.creator.noDataAvailable();
             }
 
