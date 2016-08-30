@@ -469,7 +469,7 @@ define([
 
                 $('html, body').animate({scrollTop: $(document).height()}, 10);
 
-                var maxSeries = 6;
+                var maxSeries = 10;
                 var obj = {};
 
                 config.plotOptions.bubble = {
@@ -480,17 +480,7 @@ define([
 
                 var maxVal = jStat(model.data).col(0).max();
                 
-/*
-                var countRow=0;
-                var orderRow=[];
 
-                for(var i in model.data) {
-                    orderRow.push( (model.data[i][0]?model.data[i][0].toFixed(10):-1) +"_"+i);
-                }
-
-                orderRow.sort(function(a,b) {
-                    return b.split('_')[0] - a.split('_')[0];
-                });*/
 
                 for (var i in model.data)
                 {
@@ -501,12 +491,10 @@ define([
                     var I = parseFloat(v[1]);
 
                     if(!Z || Z<=0) continue;
-
 console.log(Z)
-
                     obj = {
                         x: parseInt(i),
-                        y: maxVal-Z,
+                        y: maxVal-_.sortedIndex(_.range(1,maxVal,maxVal/3), Z),
                         z: Z,                 
                         name: model.rows[i].join(" "),
                         country: model.rows[i].join(" ")
