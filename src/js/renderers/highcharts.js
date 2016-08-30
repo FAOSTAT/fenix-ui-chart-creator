@@ -467,57 +467,53 @@ define([
 
             case "bubblecircle":
 
+                $('html, body').animate({scrollTop: $(document).height()}, 10);
 
+                var maxSeries = 6;
                 var obj = {};
-                var countRow=0;
+
+                config.plotOptions.bubble = {
+                    //minSize: jStat(model.data).col(0).min() ||0,
+                    minSize:1,
+                    maxSize: '20%'//jStat(model.data).col(0).max()
+                };
+
+                var maxVal = jStat(model.data).col(0).max();
                 
+/*
+                var countRow=0;
                 var orderRow=[];
+
                 for(var i in model.data) {
                     orderRow.push( (model.data[i][0]?model.data[i][0].toFixed(10):-1) +"_"+i);
                 }
 
-                console.log("orderRow",orderRow);
-
                 orderRow.sort(function(a,b) {
-                    return a.split('_')[0] - b.split('_')[0];
-                });
-//console.log("orderRow",orderRow)
+                    return b.split('_')[0] - a.split('_')[0];
+                });*/
 
-                for(var i in orderRow)
+                for (var i in model.data)
                 {
-                    var v=orderRow[i].split("_");
+                    //if(i>maxSeries) break;
 
-                    if(parseFloat(v[0])!==null && parseFloat(v[0])>=0)
-                        countRow++;
-                }
-
-                var incrementalAngle = 2*Math.PI/countRow;
-
-                var currentAngle=0;
-                for (var i in orderRow)
-                {
-                    var v=orderRow[i].split("_");
+                    var v = model.data[i];
                     var Z = parseFloat(v[0]);
-                    var I=parseInt(v[1]);
-                    if(Z!==null && Z>=0) {
+                    var I = parseFloat(v[1]);
 
-                        console.log("Z",Z)
-                        var X=Math.cos(currentAngle);
-                        var Y=Math.sin(currentAngle);
-                        obj = {
-                            x: X,
-                            y: Y,
-                            z: Z,                            
-                            name: model.rows[I].join(" " ),
-                            country: model.rows[I].join(" " )
-                        };
+                    if(!Z || Z<=0) continue;
 
-                        currentAngle+=incrementalAngle;
-                        
-                        config.series[0].data.push(obj);
-                    }
+console.log(Z)
+
+                    obj = {
+                        x: parseInt(i),
+                        y: maxVal-Z,
+                        z: Z,                 
+                        name: model.rows[i].join(" "),
+                        country: model.rows[i].join(" ")
+                    };
+                    
+                    config.series[0].data.push(obj);
                 }
-                //console.log('model row: ', obj);
 
                 config.tooltip = {
                     useHTML: true,

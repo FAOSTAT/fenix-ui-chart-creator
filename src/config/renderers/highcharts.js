@@ -428,9 +428,13 @@ bubble:{
         series: [{data:[]}]
 
     },
-bubblecircle:{
+
+    bubblecircle: {
 
         chart: {
+            height:400,
+            width:400,
+            polar: true,
             type: 'bubble',
             plotBorderWidth: 1,
             zoomType: 'xy'
@@ -454,6 +458,7 @@ bubblecircle:{
                 text: ''
             },
             labels: {
+                enabled: false,
                 format: '{value} '
             },
             plotLines: [{
@@ -480,6 +485,7 @@ bubblecircle:{
                 text: ''
             },
             labels: {
+                enabled: false,
                 format: '{value}'
             },
             maxPadding: 0.2,
