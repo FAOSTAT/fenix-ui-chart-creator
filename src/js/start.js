@@ -2,9 +2,6 @@
 define([
         'jquery',
         'loglevel',
-        // 'fx-c-c/adapters/star_schema_adapter',
-        // 'fx-c-c/adapters/matrix_schema_adapter',
-        // 'fx-c-c/adapters/FENIX_adapter',
         'fx-c-c/adapters/FAOSTAT_adapter',
         'fx-c-c/templates/base_template',
         'fx-c-c/creators/highcharts_creator'
@@ -85,6 +82,7 @@ define([
                 this.template.render();
                 this.creator.render({chartObj: chartObj});
 
+                this.bindEventListeners();
 
             } catch (e) {
                 // TODO: Handle the error
@@ -103,6 +101,23 @@ define([
 
         };
 
+        ChartCreator.prototype.bindEventListeners = function () {
+
+            var self = this;
+
+            $(this.config.container).find('[data-role="chart-switch"] a').on('click', function(e) {
+                e.preventDefault();
+                self.creator.updateChartType($(this).data("type"));
+            })
+
+        };
+
+        ChartCreator.prototype.unbindEventListeners = function () {
+
+            $(this.config.container).find('[data-role="chart-switch"]').off();
+
+        };
+
         ChartCreator.prototype.onError = function (e) {
             log.error("ChartCreator Error: ", e);
             // TODO: Add an Error message
@@ -110,6 +125,7 @@ define([
         };
 
         ChartCreator.prototype._validateInput = function () {
+            log.info("-----------", this.config);
             return true;
         };
 
@@ -123,6 +139,8 @@ define([
                 // TODO: handle destroy
                 this.creator.destroy();
             }
+
+            this.unbindEventListeners();
 
         };
 

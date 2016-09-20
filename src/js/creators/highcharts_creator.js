@@ -8,7 +8,7 @@ define([
         // TODO: switch to module language
         //'i18n!nls/common',
         'fx-c-c/config/events',
-        //'highcharts',
+        'highcharts',
         //'highcharts-more',
         'highcharts-heatmap',
         'highcharts-treemap',
@@ -118,15 +118,28 @@ define([
                 }
             });
 
-            this.o.config = $.extend(true, {}, baseConfig, this.o.chartObj);
+            this.o.config = $.extend(true, {},
+                baseConfig,
+                this.o.chartObj, {
+                    chart: {
+                        renderTo: this.$container[0]
+                    }
+                }
+            );
 
-            this.$container.highcharts(this.o.config);
+           // this.$chart = this.$container.highcharts(this.o.config);
+
+            log.info(this.o.config)
+
+            this.$chart = new Highcharts.Chart(this.o.config);
+
+
             //this.$container.highcharts('StockChart', this.o.config);
 
         };
 
         HightchartCreator.prototype._onValidateDataError = function () {
-            this._showConfigurationForm();
+
         };
 
         HightchartCreator.prototype._createConfiguration = function () {
@@ -177,6 +190,16 @@ define([
                 }
                 return true;
             }
+
+        };
+
+        HightchartCreator.prototype.updateChartType = function (type) {
+
+            this.$chart = new Highcharts.Chart($.extend(true, {}, this.o.config, {
+                chart: {
+                    type: type
+                }
+            }));
 
         };
 

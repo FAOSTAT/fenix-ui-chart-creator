@@ -8,14 +8,15 @@ define([
         'loglevel',
         // avoid to import here Highcharts?
         'highcharts',
-        'highcharts-export'
+        'highcharts-export',
+        //'highcharts-regression',
+        'bootstrap'
     ],
     function ($, Handlebars, template, i18n, log) {
 
         'use strict';
 
-        var defaultOptions = {
-        };
+        var defaultOptions = {};
 
         function Base_template(config) {
             // this should be always reinitialized
@@ -53,7 +54,7 @@ define([
                 }
             });
 
-        }
+        };
 
         Base_template.prototype._injectTemplate = function () {
 
@@ -61,6 +62,7 @@ define([
 
             if ( this.o.$container) {
                 this.o.$container.html(t($.extend({}, true, i18n, this.o)));
+                this.o.$container.find('[data-toggle="tooltip"]').tooltip();
             }
 
         };
