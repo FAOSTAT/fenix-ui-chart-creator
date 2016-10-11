@@ -125,7 +125,6 @@ define([
         };
 
         ChartCreator.prototype._validateInput = function () {
-            log.info("-----------", this.config);
             return true;
         };
 

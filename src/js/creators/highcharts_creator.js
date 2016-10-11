@@ -127,14 +127,7 @@ define([
                 }
             );
 
-           // this.$chart = this.$container.highcharts(this.o.config);
-
-            log.info(this.o.config)
-
             this.$chart = new Highcharts.Chart(this.o.config);
-
-
-            //this.$container.highcharts('StockChart', this.o.config);
 
         };
 
@@ -227,7 +220,6 @@ define([
             if ( this.$container ) {
                 var c = this.$container.highcharts();
                 if (c && c.destroy) {
-                   // log.info('destroy chart', this);
                     c.destroy();
                 }
             }
