@@ -190,7 +190,7 @@ define(['moment'],function (moment) {
                 },
                 credits: {
                     enabled: true,
-                    text: "Source: FAOSTAT ("  + moment(new Date()).format("MMM DD, YYYY") + ")",
+                    text: "Source: FAOSTAT ("  + moment(new Date()).format("LL") + ")",
                     style: {
                         fontSize: '7px'
                     }
